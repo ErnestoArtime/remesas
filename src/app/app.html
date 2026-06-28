@@ -1,0 +1,285 @@
+<header class="site-header">
+  <a class="brand" href="#inicio" aria-label="Remesa Clara, inicio">
+    <span class="brand-mark" aria-hidden="true">RC</span>
+    <span>Remesa Clara</span>
+  </a>
+  <nav aria-label="Navegación principal">
+    <a href="#como-funciona">Cómo funciona</a>
+    <a href="#tarifas">Tarifas</a>
+    <a href="#ayuda">Ayuda</a>
+  </nav>
+  <div class="header-actions">
+    <button
+      class="theme-toggle"
+      type="button"
+      role="switch"
+      [attr.aria-checked]="darkMode()"
+      [attr.aria-label]="darkMode() ? 'Activar modo claro' : 'Activar modo oscuro'"
+      [title]="darkMode() ? 'Modo claro' : 'Modo oscuro'"
+      (click)="toggleTheme()"
+    >
+      <span aria-hidden="true">{{ darkMode() ? '☀' : '☾' }}</span>
+    </button>
+    <a class="header-action" href="#enviar">Enviar dinero</a>
+  </div>
+</header>
+
+<main id="inicio">
+  <section class="intro-band" aria-labelledby="page-title">
+    <div class="intro-copy">
+      <p class="eyebrow">Remesas con entrega en efectivo</p>
+      <h1 id="page-title">Tu familia recibe el monto acordado. Sin cargos sorpresa.</h1>
+      <p class="intro-text">
+        Paga con USDT y coordinamos la entrega de dólares en efectivo al beneficiario.
+        Conoce el total antes de confirmar.
+      </p>
+      <div class="trust-row" aria-label="Características del servicio">
+        <span>Precio cerrado</span>
+        <span>Seguimiento por pedido</span>
+        <span>Entrega verificada</span>
+      </div>
+    </div>
+    <aside class="service-visual" aria-label="Cobertura del servicio">
+      <div class="visual-topline">
+        <span class="status-dot"></span>
+        Operación disponible
+      </div>
+      <div class="route-map" aria-hidden="true">
+        <span class="route-origin">USDT</span>
+        <span class="route-line"></span>
+        <span class="route-destination">USD</span>
+      </div>
+      <div class="visual-details">
+        <div><strong>20–1,500</strong><span>USD por envío</span></div>
+        <div><strong>24–72 h</strong><span>Según destino</span></div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="remittance-section" id="enviar" aria-labelledby="tool-title">
+    <div class="section-heading">
+      <p class="eyebrow">Crear una remesa</p>
+      <h2 id="tool-title">Cotiza y registra el envío</h2>
+    </div>
+
+    <div class="flow-layout">
+      <div class="flow-panel">
+        <div class="step-header">
+          <ol class="steps" aria-label="Progreso del envío">
+            <li [class.active]="currentStep() >= 1"><span>1</span>Cotización</li>
+            <li [class.active]="currentStep() >= 2"><span>2</span>Datos</li>
+            <li [class.active]="currentStep() >= 3"><span>3</span>Confirmación</li>
+          </ol>
+          <div class="progress-track" aria-hidden="true">
+            <span [style.width]="progress()"></span>
+          </div>
+        </div>
+
+        @if (currentStep() === 1) {
+          <form class="form-content" [formGroup]="quoteForm" (ngSubmit)="continueToDetails()">
+            <div class="form-title">
+              <h3>¿Cuánto recibirá tu familiar?</h3>
+              <p>La entrega se realiza en dólares en efectivo.</p>
+            </div>
+
+            <label class="field amount-field">
+              <span>Monto a entregar</span>
+              <span class="input-shell" [class.invalid]="fieldInvalid('quote', 'amount')">
+                <span class="currency-prefix">$</span>
+                <input type="number" formControlName="amount" min="20" max="1500" step="10" inputmode="decimal" />
+                <span class="currency-code">USD</span>
+              </span>
+              @if (fieldInvalid('quote', 'amount')) {
+                <small class="error-text">Ingresa un monto entre 20 y 1,500 USD.</small>
+              }
+            </label>
+
+            <fieldset>
+              <legend>Zona de entrega</legend>
+              <div class="option-grid">
+                <label class="radio-option">
+                  <input type="radio" formControlName="zone" value="havana" />
+                  <span><strong>La Habana</strong><small>Entrega urbana</small></span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" formControlName="zone" value="provincial" />
+                  <span><strong>Capital provincial</strong><small>Principales municipios</small></span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" formControlName="zone" value="remote" />
+                  <span><strong>Otras zonas</strong><small>Sujeto a cobertura</small></span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Velocidad</legend>
+              <div class="segmented-control">
+                <label>
+                  <input type="radio" formControlName="speed" value="standard" />
+                  <span>Estándar</span>
+                </label>
+                <label>
+                  <input type="radio" formControlName="speed" value="priority" />
+                  <span>Prioritaria +$5</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <button class="primary-button" type="submit">Continuar con los datos</button>
+          </form>
+        }
+
+        @if (currentStep() === 2) {
+          <form class="form-content" [formGroup]="detailsForm" (ngSubmit)="createOrder()">
+            <div class="form-title">
+              <h3>Datos para coordinar la entrega</h3>
+              <p>Usaremos estos datos únicamente para validar y completar esta remesa.</p>
+            </div>
+
+            <div class="form-subsection">
+              <h4>Remitente</h4>
+              <div class="two-column">
+                <label class="field">
+                  <span>Nombre completo</span>
+                  <input type="text" formControlName="senderName" autocomplete="name" [class.invalid]="fieldInvalid('details', 'senderName')" />
+                  @if (fieldInvalid('details', 'senderName')) { <small class="error-text">Escribe el nombre completo.</small> }
+                </label>
+                <label class="field">
+                  <span>Teléfono o WhatsApp</span>
+                  <input type="tel" formControlName="senderPhone" autocomplete="tel" placeholder="+1 555 000 0000" [class.invalid]="fieldInvalid('details', 'senderPhone')" />
+                  @if (fieldInvalid('details', 'senderPhone')) { <small class="error-text">Revisa el número indicado.</small> }
+                </label>
+              </div>
+            </div>
+
+            <div class="form-subsection">
+              <h4>Beneficiario</h4>
+              <div class="two-column">
+                <label class="field">
+                  <span>Nombre completo</span>
+                  <input type="text" formControlName="beneficiaryName" [class.invalid]="fieldInvalid('details', 'beneficiaryName')" />
+                  @if (fieldInvalid('details', 'beneficiaryName')) { <small class="error-text">Escribe el nombre completo.</small> }
+                </label>
+                <label class="field">
+                  <span>Teléfono</span>
+                  <input type="tel" formControlName="beneficiaryPhone" placeholder="+53 5 000 0000" [class.invalid]="fieldInvalid('details', 'beneficiaryPhone')" />
+                  @if (fieldInvalid('details', 'beneficiaryPhone')) { <small class="error-text">Revisa el número indicado.</small> }
+                </label>
+                <label class="field">
+                  <span>Municipio</span>
+                  <input type="text" formControlName="municipality" [class.invalid]="fieldInvalid('details', 'municipality')" />
+                  @if (fieldInvalid('details', 'municipality')) { <small class="error-text">Indica el municipio.</small> }
+                </label>
+                <label class="field">
+                  <span>Dirección de entrega</span>
+                  <input type="text" formControlName="address" autocomplete="street-address" [class.invalid]="fieldInvalid('details', 'address')" />
+                  @if (fieldInvalid('details', 'address')) { <small class="error-text">Indica una dirección válida.</small> }
+                </label>
+              </div>
+              <label class="field">
+                <span>Indicaciones para la entrega <em>Opcional</em></span>
+                <textarea formControlName="notes" rows="3" placeholder="Referencia del lugar o horario preferido"></textarea>
+              </label>
+            </div>
+
+            <label class="consent-field">
+              <input type="checkbox" formControlName="consent" />
+              <span>Confirmo que los datos son correctos y autorizo su uso para gestionar esta remesa.</span>
+            </label>
+            @if (fieldInvalid('details', 'consent')) { <small class="error-text consent-error">Debes confirmar para continuar.</small> }
+
+            <div class="button-row">
+              <button class="secondary-button" type="button" (click)="returnToQuote()">Volver</button>
+              <button class="primary-button" type="submit">Registrar remesa</button>
+            </div>
+          </form>
+        }
+
+        @if (currentStep() === 3 && order(); as currentOrder) {
+          <div class="confirmation-content">
+            <div class="confirmation-mark" aria-hidden="true">✓</div>
+            <p class="eyebrow">Solicitud registrada</p>
+            <h3>{{ currentOrder.reference }}</h3>
+            <p>
+              Estamos preparando la dirección de pago. No envíes USDT hasta que aparezca la dirección asignada
+              y recibas la confirmación del pedido.
+            </p>
+            <div class="payment-status">
+              <span class="status-dot pending"></span>
+              <div><strong>Dirección de pago pendiente</strong><small>Se asignará desde el servidor seguro de TronDealer.</small></div>
+            </div>
+            <dl class="order-details">
+              <div><dt>Beneficiario</dt><dd>{{ currentOrder.beneficiaryName }}</dd></div>
+              <div><dt>Destino</dt><dd>{{ currentOrder.municipality }}</dd></div>
+              <div><dt>Recibirá</dt><dd>{{ currentOrder.quote.amountDelivered | currency:'USD' }}</dd></div>
+              <div><dt>Total</dt><dd>{{ currentOrder.quote.totalToPay | currency:'USD' }} USDT</dd></div>
+            </dl>
+            <button class="secondary-button" type="button" (click)="startAnother()">Crear otra remesa</button>
+          </div>
+        }
+      </div>
+
+      <aside class="quote-summary" aria-label="Resumen de cotización">
+        <div class="summary-heading">
+          <span>Resumen</span>
+          <strong>{{ quote().estimatedDelivery }}</strong>
+        </div>
+        <div class="recipient-total">
+          <span>Tu familiar recibe</span>
+          <strong>{{ quote().amountDelivered | currency:'USD' }}</strong>
+          <small>en efectivo</small>
+        </div>
+        <dl class="fee-list">
+          <div><dt>Monto enviado</dt><dd>{{ quote().amountDelivered | currency:'USD' }}</dd></div>
+          <div><dt>Servicio ({{ quote().feePercentage }}%)</dt><dd>{{ quote().serviceFee | currency:'USD' }}</dd></div>
+          <div><dt>Entrega</dt><dd>{{ quote().deliveryFee | currency:'USD' }}</dd></div>
+        </dl>
+        <div class="summary-total">
+          <span>Total a pagar</span>
+          <strong>{{ quote().totalToPay | currency:'USD' }} <small>USDT</small></strong>
+        </div>
+        <p class="summary-note">El total queda fijo durante 20 minutos después de asignar la dirección de pago.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="process-section" id="como-funciona" aria-labelledby="process-title">
+    <div class="section-heading">
+      <p class="eyebrow">Proceso controlado</p>
+      <h2 id="process-title">Del pago a la entrega</h2>
+    </div>
+    <ol class="process-list">
+      <li><span>01</span><div><h3>Registra la remesa</h3><p>Define el monto y los datos de quien recibirá.</p></div></li>
+      <li><span>02</span><div><h3>Paga con USDT</h3><p>Usa únicamente la dirección asignada a tu pedido.</p></div></li>
+      <li><span>03</span><div><h3>Confirmamos en la red</h3><p>La entrega se libera después de las confirmaciones requeridas.</p></div></li>
+      <li><span>04</span><div><h3>Entregamos y verificamos</h3><p>El beneficiario confirma el monto con un código de seguridad.</p></div></li>
+    </ol>
+  </section>
+
+  <section class="rates-section" id="tarifas" aria-labelledby="rates-title">
+    <div>
+      <p class="eyebrow">Tarifas visibles</p>
+      <h2 id="rates-title">La comisión baja cuando envías más</h2>
+      <p>El cálculo final incluye servicio y entrega. Nunca descontamos la comisión del monto destinado al beneficiario.</p>
+    </div>
+    <div class="rate-table" role="table" aria-label="Tarifas por monto">
+      <div role="row"><span role="columnheader">Monto</span><span role="columnheader">Servicio</span></div>
+      <div role="row"><span role="cell">$20–$99</span><strong role="cell">8% · mínimo $5</strong></div>
+      <div role="row"><span role="cell">$100–$299</span><strong role="cell">6.5%</strong></div>
+      <div role="row"><span role="cell">$300–$699</span><strong role="cell">5%</strong></div>
+      <div role="row"><span role="cell">$700–$1,500</span><strong role="cell">4%</strong></div>
+    </div>
+  </section>
+
+  <section class="help-section" id="ayuda">
+    <div><p class="eyebrow">Soporte de operación</p><h2>¿Necesitas revisar una entrega?</h2></div>
+    <a href="mailto:operaciones@remesaclara.com">Contactar soporte</a>
+  </section>
+</main>
+
+<footer>
+  <a class="brand footer-brand" href="#inicio"><span class="brand-mark" aria-hidden="true">RC</span><span>Remesa Clara</span></a>
+  <p>Servicio en etapa de validación operativa. La disponibilidad depende de la zona y del cumplimiento de identidad.</p>
+  <span>© 2026 Remesa Clara</span>
+</footer>
