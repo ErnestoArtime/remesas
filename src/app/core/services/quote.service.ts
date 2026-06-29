@@ -23,8 +23,6 @@ export class QuoteService {
 
   private readonly deliveryFees: Record<DeliveryZone, number> = {
     havana: 3,
-    provincial: 6,
-    remote: 10,
   };
 
   calculate(request: QuoteRequest): RemittanceQuote {
@@ -40,16 +38,12 @@ export class QuoteService {
       deliveryFee: this.round(deliveryFee),
       totalToPay: this.round(amount + serviceFee + deliveryFee),
       feePercentage: tier.percentage,
-      estimatedDelivery: this.getDeliveryEstimate(request.zone, request.speed),
+      estimatedDelivery: this.getDeliveryEstimate(request.speed),
     };
   }
 
-  private getDeliveryEstimate(zone: DeliveryZone, speed: DeliverySpeed): string {
-    if (speed === 'priority') {
-      return zone === 'havana' ? 'Hasta 6 horas' : 'En 24 horas';
-    }
-
-    return zone === 'havana' ? 'En 24 horas' : 'De 1 a 3 días';
+  private getDeliveryEstimate(speed: DeliverySpeed): string {
+    return speed === 'priority' ? 'Hasta 6 horas' : 'En 24 horas';
   }
 
   private round(value: number): number {

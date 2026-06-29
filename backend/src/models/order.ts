@@ -1,13 +1,6 @@
-export type DeliveryZone = 'havana';
-export type DeliverySpeed = 'standard' | 'priority';
 export type PaymentMethod = 'usdt' | 'euro';
-
-export interface QuoteRequest {
-  amount: number;
-  zone: DeliveryZone;
-  speed: DeliverySpeed;
-  paymentMethod: PaymentMethod;
-}
+export type PaymentStatus = 'pending_wallet' | 'awaiting_payment' | 'confirmed' | 'contact_whatsapp';
+export type DeliverySpeed = 'standard' | 'priority';
 
 export interface RemittanceQuote {
   amountDelivered: number;
@@ -18,15 +11,19 @@ export interface RemittanceQuote {
   estimatedDelivery: string;
 }
 
-export interface RemittanceOrder {
+export interface Order {
   reference: string;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  deliverySpeed: DeliverySpeed;
   quote: RemittanceQuote;
   senderName: string;
+  senderPhone: string;
   beneficiaryName: string;
   beneficiaryPhone: string;
   municipality: string;
-  createdAt: string;
-  paymentStatus: 'pending_wallet' | 'awaiting_payment' | 'confirmed' | 'contact_whatsapp';
-  paymentMethod: PaymentMethod;
+  address: string;
+  notes: string;
   tronWalletAddress?: string;
+  createdAt: string;
 }

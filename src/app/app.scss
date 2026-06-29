@@ -28,8 +28,10 @@ h3 { font-size: 23px; letter-spacing: 0; line-height: 1.25; }
 .status-dot { background: #58c899; border-radius: 50%; box-shadow: 0 0 0 4px rgba(88,200,153,.16); display: inline-block; height: 8px; width: 8px; }
 .status-dot.pending { background: #e6a650; box-shadow: 0 0 0 4px rgba(230,166,80,.18); flex: 0 0 auto; }
 .route-map { align-items: center; display: grid; grid-template-columns: auto 1fr auto; margin: 72px 0 66px; }
-.route-origin, .route-destination { align-items: center; background: white; border-radius: 50%; color: #17211d; display: inline-flex; font-size: 12px; font-weight: 800; height: 50px; justify-content: center; width: 50px; }
-.route-destination { background: var(--coral); color: white; }
+.route-origins { display: flex; gap: 6px; }
+.route-pill { align-items: center; background: white; border-radius: 20px; color: #17211d; display: inline-flex; font-size: 10px; font-weight: 800; height: 32px; justify-content: center; padding: 0 14px; }
+.route-pill.sep { background: rgba(255,255,255,.12); color: white; }
+.route-destination { align-items: center; background: var(--coral); border-radius: 50%; color: white; display: inline-flex; font-size: 12px; font-weight: 800; height: 50px; justify-content: center; width: 50px; }
 .route-line { border-top: 1px dashed rgba(255,255,255,.55); position: relative; }
 .route-line::after { background: white; border-radius: 50%; content: ""; height: 5px; position: absolute; right: 20%; top: -3px; width: 5px; }
 .visual-details { border-top: 1px solid rgba(255,255,255,.16); display: grid; grid-template-columns: 1fr 1fr; padding-top: 20px; }
@@ -80,6 +82,10 @@ fieldset legend { margin-bottom: 10px; }
 .radio-option small { color: var(--muted); font-size: 11px; line-height: 1.35; }
 .radio-option input:checked + span { background: var(--green-pale); border-color: var(--green); box-shadow: inset 0 0 0 1px var(--green); }
 .radio-option input:focus-visible + span { outline: 3px solid rgba(23,107,77,.18); }
+.whatsapp-notice { background: #f0faf4; border: 1px solid #b8dfcb; border-radius: 6px; padding: 18px; }
+.whatsapp-notice strong { color: var(--green); font-size: 12px; }
+.whatsapp-notice p { color: var(--muted); font-size: 12px; line-height: 1.55; margin: 6px 0 0; }
+:host-context([data-theme="dark"]) .whatsapp-notice { background: #1c3329; border-color: #2f5843; }
 .segmented-control { background: #edf1ee; border-radius: 6px; display: grid; grid-template-columns: 1fr 1fr; padding: 3px; }
 .segmented-control label { position: relative; }
 .segmented-control input { opacity: 0; position: absolute; }
@@ -125,6 +131,10 @@ fieldset legend { margin-bottom: 10px; }
 .payment-status div { display: flex; flex-direction: column; gap: 3px; }
 .payment-status strong { font-size: 13px; }
 .payment-status small { color: #765b32; font-size: 11px; }
+.payment-status.wallet-address { background: #f0faf4; border-color: #b8dfcb; display: block; text-align: center; }
+.payment-status.wallet-address code { background: white; border: 1px solid #b8dfcb; border-radius: 4px; display: inline-block; font-size: 12px; margin: 8px 0; padding: 8px 12px; word-break: break-all; }
+:host-context([data-theme="dark"]) .payment-status.wallet-address { background: #1c3329; border-color: #2f5843; }
+:host-context([data-theme="dark"]) .payment-status.wallet-address code { background: #0e1511; color: #b8c5be; }
 .order-details { display: grid; grid-template-columns: repeat(2,1fr); margin: 0 auto 28px; max-width: 560px; text-align: left; }
 .order-details div { border-top: 1px solid var(--line); padding: 14px 8px; }
 .order-details dt { color: var(--muted); font-size: 11px; }

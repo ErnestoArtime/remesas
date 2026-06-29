@@ -1,8 +1,9 @@
 import { CurrencyPipe } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RemittanceOrder } from './core/models/remittance.model';
+import { PaymentMethod, RemittanceOrder } from './core/models/remittance.model';
 import { QuoteService } from './core/services/quote.service';
 
 @Component({
@@ -12,6 +13,7 @@ import { QuoteService } from './core/services/quote.service';
   styleUrl: './app.scss'
 })
 export class App {
+  private readonly http = inject(HttpClient);
   private readonly formBuilder = inject(FormBuilder);
   private readonly quoteService = inject(QuoteService);
   private readonly destroyRef = inject(DestroyRef);
@@ -24,6 +26,7 @@ export class App {
     amount: [100, [Validators.required, Validators.min(20), Validators.max(1500)]],
     zone: ['havana' as const, Validators.required],
     speed: ['standard' as const, Validators.required],
+    paymentMethod: ['usdt' as PaymentMethod, Validators.required],
   });
 
   protected readonly detailsForm = this.formBuilder.nonNullable.group({
@@ -68,21 +71,34 @@ export class App {
     if (this.detailsForm.invalid) return;
 
     const details = this.detailsForm.getRawValue();
-    const suffix = Math.floor(1000 + Math.random() * 9000);
-    const date = new Date();
+    const quote = this.quote();
+    const { paymentMethod, speed } = this.quoteForm.getRawValue();
 
-    this.order.set({
-      reference: `RC-${date.getFullYear()}-${suffix}`,
-      quote: this.quote(),
+    this.http.post('/api/orders', {
+      paymentMethod,
+      deliverySpeed: speed,
+      amountDelivered: quote.amountDelivered,
+      totalToPay: quote.totalToPay,
+      serviceFee: quote.serviceFee,
+      deliveryFee: quote.deliveryFee,
+      feePercentage: quote.feePercentage,
       senderName: details.senderName,
+      senderPhone: details.senderPhone,
       beneficiaryName: details.beneficiaryName,
       beneficiaryPhone: details.beneficiaryPhone,
       municipality: details.municipality,
-      createdAt: date,
-      paymentStatus: 'awaiting_wallet',
+      address: details.address,
+      notes: details.notes,
+    }).subscribe({
+      next: (order: any) => {
+        this.order.set(order);
+        this.currentStep.set(3);
+        this.scrollToTool();
+      },
+      error: () => {
+        alert('Error al registrar la remesa. Intenta de nuevo.');
+      },
     });
-    this.currentStep.set(3);
-    this.scrollToTool();
   }
 
   protected startAnother(): void {

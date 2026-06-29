@@ -30,7 +30,7 @@
       <p class="eyebrow">Remesas con entrega en efectivo</p>
       <h1 id="page-title">Tu familia recibe el monto acordado. Sin cargos sorpresa.</h1>
       <p class="intro-text">
-        Paga con USDT y coordinamos la entrega de dólares en efectivo al beneficiario.
+        Paga con USDT, IBAN o Bizum y coordinamos la entrega de dólares en efectivo al beneficiario en La Habana.
         Conoce el total antes de confirmar.
       </p>
       <div class="trust-row" aria-label="Características del servicio">
@@ -45,13 +45,16 @@
         Operación disponible
       </div>
       <div class="route-map" aria-hidden="true">
-        <span class="route-origin">USDT</span>
+        <span class="route-origins">
+          <span class="route-pill">USDT</span>
+          <span class="route-pill sep">EUR</span>
+        </span>
         <span class="route-line"></span>
         <span class="route-destination">USD</span>
       </div>
       <div class="visual-details">
         <div><strong>20–1,500</strong><span>USD por envío</span></div>
-        <div><strong>24–72 h</strong><span>Según destino</span></div>
+        <div><strong>La Habana</strong><span>Entrega en 24 h</span></div>
       </div>
     </aside>
   </section>
@@ -79,7 +82,7 @@
           <form class="form-content" [formGroup]="quoteForm" (ngSubmit)="continueToDetails()">
             <div class="form-title">
               <h3>¿Cuánto recibirá tu familiar?</h3>
-              <p>La entrega se realiza en dólares en efectivo.</p>
+              <p>La entrega se realiza en dólares en efectivo en La Habana.</p>
             </div>
 
             <label class="field amount-field">
@@ -95,22 +98,25 @@
             </label>
 
             <fieldset>
-              <legend>Zona de entrega</legend>
+              <legend>Método de pago</legend>
               <div class="option-grid">
                 <label class="radio-option">
-                  <input type="radio" formControlName="zone" value="havana" />
-                  <span><strong>La Habana</strong><small>Entrega urbana</small></span>
+                  <input type="radio" formControlName="paymentMethod" value="usdt" />
+                  <span><strong>USDT (TRC-20)</strong><small>Paga con cripto desde tu wallet</small></span>
                 </label>
                 <label class="radio-option">
-                  <input type="radio" formControlName="zone" value="provincial" />
-                  <span><strong>Capital provincial</strong><small>Principales municipios</small></span>
-                </label>
-                <label class="radio-option">
-                  <input type="radio" formControlName="zone" value="remote" />
-                  <span><strong>Otras zonas</strong><small>Sujeto a cobertura</small></span>
+                  <input type="radio" formControlName="paymentMethod" value="euro" />
+                  <span><strong>EUR por IBAN o Bizum</strong><small>Contactarás por WhatsApp para coordinar</small></span>
                 </label>
               </div>
             </fieldset>
+
+            @if (quoteForm.get('paymentMethod')?.value === 'euro') {
+              <div class="whatsapp-notice">
+                <strong>Pago en EUR</strong>
+                <p>Al continuar, recibirás instrucciones para contactarnos por WhatsApp y coordinar el pago por IBAN o Bizum. El número de contacto se asignará al registrar la remesa.</p>
+              </div>
+            }
 
             <fieldset>
               <legend>Velocidad</legend>
@@ -201,19 +207,42 @@
             <div class="confirmation-mark" aria-hidden="true">✓</div>
             <p class="eyebrow">Solicitud registrada</p>
             <h3>{{ currentOrder.reference }}</h3>
-            <p>
-              Estamos preparando la dirección de pago. No envíes USDT hasta que aparezca la dirección asignada
-              y recibas la confirmación del pedido.
-            </p>
-            <div class="payment-status">
-              <span class="status-dot pending"></span>
-              <div><strong>Dirección de pago pendiente</strong><small>Se asignará desde el servidor seguro de TronDealer.</small></div>
-            </div>
+
+            @if (currentOrder.paymentMethod === 'usdt') {
+              @if (currentOrder.tronWalletAddress) {
+                <p>Envía el monto exacto en USDT (TRC-20) a la dirección de abajo.</p>
+                <div class="payment-status wallet-address">
+                  <div>
+                    <strong>Dirección de pago</strong>
+                    <code>{{ currentOrder.tronWalletAddress }}</code>
+                    <small>Red: TRC-20 · Solo USDT</small>
+                  </div>
+                </div>
+              } @else {
+                <p>
+                  Estamos preparando la dirección de pago. No envíes USDT hasta que aparezca la dirección asignada
+                  y recibas la confirmación del pedido.
+                </p>
+                <div class="payment-status">
+                  <span class="status-dot pending"></span>
+                  <div><strong>Dirección de pago pendiente</strong><small>Se asignará desde el servidor seguro de TronDealer.</small></div>
+                </div>
+              }
+            } @else {
+              <p>
+                Para pagar en EUR por IBAN o Bizum, contáctanos por WhatsApp con el número de referencia.
+              </p>
+              <div class="payment-status">
+                <span class="status-dot pending"></span>
+                <div><strong>Pendiente de contacto</strong><small>Te escribiremos al WhatsApp registrado para coordinar el pago.</small></div>
+              </div>
+            }
+
             <dl class="order-details">
               <div><dt>Beneficiario</dt><dd>{{ currentOrder.beneficiaryName }}</dd></div>
               <div><dt>Destino</dt><dd>{{ currentOrder.municipality }}</dd></div>
               <div><dt>Recibirá</dt><dd>{{ currentOrder.quote.amountDelivered | currency:'USD' }}</dd></div>
-              <div><dt>Total</dt><dd>{{ currentOrder.quote.totalToPay | currency:'USD' }} USDT</dd></div>
+              <div><dt>Total</dt><dd>{{ currentOrder.quote.totalToPay | currency:'USD' }} {{ currentOrder.paymentMethod === 'usdt' ? 'USDT' : 'EUR' }}</dd></div>
             </dl>
             <button class="secondary-button" type="button" (click)="startAnother()">Crear otra remesa</button>
           </div>
@@ -237,7 +266,7 @@
         </dl>
         <div class="summary-total">
           <span>Total a pagar</span>
-          <strong>{{ quote().totalToPay | currency:'USD' }} <small>USDT</small></strong>
+          <strong>{{ quote().totalToPay | currency:'USD' }} <small>{{ quoteForm.get('paymentMethod')?.value === 'euro' ? 'EUR' : 'USDT' }}</small></strong>
         </div>
         <p class="summary-note">El total queda fijo durante 20 minutos después de asignar la dirección de pago.</p>
       </aside>
@@ -250,10 +279,10 @@
       <h2 id="process-title">Del pago a la entrega</h2>
     </div>
     <ol class="process-list">
-      <li><span>01</span><div><h3>Registra la remesa</h3><p>Define el monto y los datos de quien recibirá.</p></div></li>
-      <li><span>02</span><div><h3>Paga con USDT</h3><p>Usa únicamente la dirección asignada a tu pedido.</p></div></li>
-      <li><span>03</span><div><h3>Confirmamos en la red</h3><p>La entrega se libera después de las confirmaciones requeridas.</p></div></li>
-      <li><span>04</span><div><h3>Entregamos y verificamos</h3><p>El beneficiario confirma el monto con un código de seguridad.</p></div></li>
+      <li><span>01</span><div><h3>Registra la remesa</h3><p>Define el monto, el método de pago y los datos de quien recibirá.</p></div></li>
+      <li><span>02</span><div><h3>Paga con USDT o EUR</h3><p>Recibirás instrucciones según el método elegido: dirección USDT o datos IBAN/Bizum.</p></div></li>
+      <li><span>03</span><div><h3>Confirmamos la operación</h3><p>Validamos el pago y liberamos la entrega para su coordinación.</p></div></li>
+      <li><span>04</span><div><h3>Entregamos y verificamos</h3><p>El beneficiario confirma el monto recibido con un código de seguridad.</p></div></li>
     </ol>
   </section>
 

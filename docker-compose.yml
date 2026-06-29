@@ -1,0 +1,23 @@
+name: remesas
+
+services:
+  backend:
+    build:
+      context: ./backend
+    environment:
+      - PORT=3001
+      - TRONDEALER_API_KEY=${TRONDEALER_API_KEY:-}
+      - TRONDEALER_WEBHOOK_SECRET=${TRONDEALER_WEBHOOK_SECRET:-}
+    volumes:
+      - ./backend/data:/app/data
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
