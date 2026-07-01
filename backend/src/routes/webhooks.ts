@@ -6,7 +6,9 @@ export const webhooksRouter = Router();
 
 const WEBHOOK_SECRET = process.env.TRONDEALER_WEBHOOK_SECRET || '';
 
-const STATUS_MAP: Record<string, string> = {
+import type { PaymentStatus } from '../models/order';
+
+const STATUS_MAP: Record<string, PaymentStatus> = {
   detected: 'detected',
   confirmed: 'confirmed',
   notified: 'notified',
