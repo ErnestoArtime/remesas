@@ -1,5 +1,16 @@
 export type PaymentMethod = 'usdt' | 'euro';
-export type PaymentStatus = 'pending_wallet' | 'awaiting_payment' | 'confirmed' | 'contact_whatsapp';
+export type PaymentStatus =
+  | 'pending_wallet'
+  | 'awaiting_payment'
+  | 'detected'
+  | 'confirmed'
+  | 'notified'
+  | 'swept'
+  | 'ready_for_delivery'
+  | 'delivered'
+  | 'cancelled'
+  | 'expired'
+  | 'contact_whatsapp';
 export type DeliverySpeed = 'standard' | 'priority';
 
 export interface RemittanceQuote {
@@ -25,5 +36,8 @@ export interface Order {
   address: string;
   notes: string;
   tronWalletAddress?: string;
+  txHash?: string;
+  paidAmount?: number;
+  paidNetwork?: string;
   createdAt: string;
 }

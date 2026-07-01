@@ -102,7 +102,7 @@
               <div class="option-grid">
                 <label class="radio-option">
                   <input type="radio" formControlName="paymentMethod" value="usdt" />
-                  <span><strong>USDT (TRC-20)</strong><small>Paga con cripto desde tu wallet</small></span>
+                  <span><strong>USDT (BSC)</strong><small>Paga con cripto desde tu wallet</small></span>
                 </label>
                 <label class="radio-option">
                   <input type="radio" formControlName="paymentMethod" value="euro" />
@@ -210,12 +210,12 @@
 
             @if (currentOrder.paymentMethod === 'usdt') {
               @if (currentOrder.tronWalletAddress) {
-                <p>Envía el monto exacto en USDT (TRC-20) a la dirección de abajo.</p>
+                <p>Envía el monto exacto en USDT (BSC) a la dirección de abajo.</p>
                 <div class="payment-status wallet-address">
                   <div>
                     <strong>Dirección de pago</strong>
                     <code>{{ currentOrder.tronWalletAddress }}</code>
-                    <small>Red: TRC-20 · Solo USDT</small>
+                    <small>Red: BSC (BEP-20) · Solo USDT</small>
                   </div>
                 </div>
               } @else {

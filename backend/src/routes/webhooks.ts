@@ -6,6 +6,13 @@ export const webhooksRouter = Router();
 
 const WEBHOOK_SECRET = process.env.TRONDEALER_WEBHOOK_SECRET || '';
 
+const STATUS_MAP: Record<string, string> = {
+  detected: 'detected',
+  confirmed: 'confirmed',
+  notified: 'notified',
+  swept: 'swept',
+};
+
 webhooksRouter.post(
   '/trondealer',
   raw({ type: 'application/json' }),
@@ -29,14 +36,26 @@ webhooksRouter.post(
     }
 
     const event = JSON.parse(req.body.toString());
-    console.log('Webhook recibido:', event);
+    const { label, status, txHash, amount, network } = event;
 
-    if (event.label && (event.status === 'confirmed' || event.status === 'notified')) {
-      const order = store.findByReference(event.label);
-      if (order && order.paymentStatus === 'awaiting_payment') {
-        order.paymentStatus = 'confirmed';
-        store.save(order);
-        console.log(`Orden ${event.label} confirmada`);
+    if (label && status) {
+      const orderStatus = STATUS_MAP[status];
+      if (orderStatus) {
+        const order = store.findByReference(label);
+        if (order) {
+          order.paymentStatus = orderStatus;
+
+          if (txHash) order.txHash = txHash;
+          if (amount) order.paidAmount = amount;
+          if (network) order.paidNetwork = network;
+
+          store.save(order);
+          console.log(`[webhook] ${label} → ${status}`);
+        } else {
+          console.warn(`[webhook] Orden no encontrada: ${label}`);
+        }
+      } else {
+        console.log(`[webhook] Estado desconocido para ${label}: ${status}`);
       }
     }
 
