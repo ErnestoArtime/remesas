@@ -3,6 +3,8 @@ export type PaymentStatus =
   | 'pending_wallet'
   | 'awaiting_payment'
   | 'detected'
+  | 'underpaid'
+  | 'payment_review'
   | 'confirmed'
   | 'notified'
   | 'swept'

@@ -151,6 +151,8 @@ export class AdminComponent {
       pending_wallet: 'Preparando wallet',
       awaiting_payment: 'Esperando pago',
       detected: 'Pago detectado',
+      underpaid: 'Pago insuficiente',
+      payment_review: 'Revisar pago',
       confirmed: 'Pago confirmado',
       notified: 'Confirmado',
       swept: 'Fondos recibidos',

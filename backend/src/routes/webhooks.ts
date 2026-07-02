@@ -45,11 +45,23 @@ webhooksRouter.post(
       if (orderStatus) {
         const order = store.findByReference(label);
         if (order) {
-          order.paymentStatus = orderStatus;
-
           if (txHash) order.txHash = txHash;
-          if (amount) order.paidAmount = amount;
+          const eventAmount = Number(amount);
+          if (amount !== undefined && Number.isFinite(eventAmount)) order.paidAmount = eventAmount;
           if (network) order.paidNetwork = network;
+
+          if (orderStatus === 'detected') {
+            order.paymentStatus = 'detected';
+          } else {
+            const paidAmount = Number(order.paidAmount);
+            if (!Number.isFinite(paidAmount)) {
+              order.paymentStatus = 'payment_review';
+            } else if (paidAmount + 0.000001 < order.quote.totalToPay) {
+              order.paymentStatus = 'underpaid';
+            } else {
+              order.paymentStatus = orderStatus;
+            }
+          }
 
           store.save(order);
           console.log(`[webhook] ${label} → ${status}`);

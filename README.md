@@ -32,6 +32,8 @@ Genera cada secreto local con `openssl rand -hex 32`. No reutilices el secreto d
 4. TronDealer notifica los estados `detected`, `confirmed`, `notified` y `swept`.
 5. La entrega sólo puede asignarse después de `confirmed`, nunca en `detected`.
 
+El webhook compara el importe confirmado con `totalToPay`. Los pagos insuficientes quedan en `underpaid` y los eventos sin importe verificable en `payment_review`; ninguno puede asignarse para entrega.
+
 Webhook público:
 
 ```text

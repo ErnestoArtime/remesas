@@ -26,7 +26,7 @@ export interface RemittanceOrder {
   beneficiaryPhone: string;
   municipality: string;
   createdAt: string;
-  paymentStatus: 'pending_wallet' | 'awaiting_payment' | 'detected' | 'confirmed' | 'notified' | 'swept' | 'ready_for_delivery' | 'delivered' | 'cancelled' | 'expired' | 'contact_whatsapp';
+  paymentStatus: 'pending_wallet' | 'awaiting_payment' | 'detected' | 'underpaid' | 'payment_review' | 'confirmed' | 'notified' | 'swept' | 'ready_for_delivery' | 'delivered' | 'cancelled' | 'expired' | 'contact_whatsapp';
   paymentMethod: PaymentMethod;
   tronWalletAddress?: string;
   txHash?: string;
