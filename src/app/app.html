@@ -1,3 +1,6 @@
+@if (isAdminPage) {
+  <app-admin />
+} @else {
 <header class="site-header">
   <a class="brand" href="#inicio" aria-label="Remesa Clara, inicio">
     <span class="brand-mark" aria-hidden="true">RC</span>
@@ -312,3 +315,4 @@
   <p>Servicio en etapa de validación operativa. La disponibilidad depende de la zona y del cumplimiento de identidad.</p>
   <span>© 2026 Remesa Clara</span>
 </footer>
+}

@@ -8,6 +8,7 @@ services:
       - PORT=3001
       - TRONDEALER_API_KEY=${TRONDEALER_API_KEY:-}
       - TRONDEALER_WEBHOOK_SECRET=${TRONDEALER_WEBHOOK_SECRET:-}
+      - ADMIN_API_KEY=${ADMIN_API_KEY:-}
     volumes:
       - ./backend/data:/app/data
     restart: unless-stopped

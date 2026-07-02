@@ -59,6 +59,7 @@ ordersRouter.post('/orders', async (req, res) => {
       municipality,
       address,
       notes: notes || '',
+      deliveryStatus: 'unassigned',
       createdAt: new Date().toISOString(),
     };
 

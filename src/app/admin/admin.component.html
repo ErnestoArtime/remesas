@@ -1,0 +1,93 @@
+@if (!authenticated()) {
+  <main class="login-page">
+    <section class="login-panel" aria-labelledby="admin-login-title">
+      <a class="admin-brand" href="/"><span>RC</span>Remesa Clara</a>
+      <p class="eyebrow">Acceso restringido</p>
+      <h1 id="admin-login-title">Panel de operaciones</h1>
+      <p>Introduce la clave administrativa configurada en el servidor.</p>
+      <form [formGroup]="loginForm" (ngSubmit)="login()">
+        <label><span>Clave de acceso</span><input type="password" formControlName="token" autocomplete="current-password" /></label>
+        @if (error()) { <div class="message error" role="alert">{{ error() }}</div> }
+        <button type="submit" [disabled]="loading()">{{ loading() ? 'Verificando…' : 'Entrar' }}</button>
+      </form>
+      <a class="back-link" href="/">Volver al sitio</a>
+    </section>
+  </main>
+} @else {
+  <header class="admin-header">
+    <a class="admin-brand" href="/"><span>RC</span>Remesa Clara</a>
+    <div><strong>Operaciones</strong><button type="button" (click)="logout()">Cerrar sesión</button></div>
+  </header>
+
+  <main class="admin-main">
+    <section class="page-title">
+      <div><p class="eyebrow">Centro de operaciones</p><h1>Pedidos y entregas</h1></div>
+      <button class="refresh-button" type="button" (click)="refresh()" [disabled]="loading()">Actualizar</button>
+    </section>
+
+    @if (error()) { <div class="message error" role="alert">{{ error() }}</div> }
+    @if (notice()) { <div class="message success" role="status">{{ notice() }}</div> }
+
+    <section class="metrics" aria-label="Resumen operativo">
+      <div><span>Pedidos</span><strong>{{ metrics().total }}</strong></div>
+      <div><span>Listos para asignar</span><strong>{{ metrics().ready }}</strong></div>
+      <div><span>Entregas activas</span><strong>{{ metrics().active }}</strong></div>
+      <div><span>Entregados</span><strong>{{ metrics().delivered }}</strong></div>
+    </section>
+
+    <section class="workspace">
+      <div class="orders-area">
+        <div class="section-title"><div><h2>Pedidos</h2><p>{{ filteredOrders().length }} resultados</p></div></div>
+        <div class="filters">
+          <label><span>Buscar</span><input type="search" placeholder="Referencia, beneficiario o municipio" (input)="search.set($any($event.target).value)" /></label>
+          <label><span>Estado</span><select (change)="statusFilter.set($any($event.target).value)"><option value="all">Todos</option><option value="ready">Listos para asignar</option><option value="awaiting_payment">Esperando pago</option><option value="assigned">Asignados</option><option value="out_for_delivery">En camino</option><option value="delivered">Entregados</option></select></label>
+        </div>
+
+        <div class="orders-table">
+          <div class="table-head"><span>Pedido</span><span>Beneficiario</span><span>Estados</span><span>Entrega</span></div>
+          @for (order of filteredOrders(); track order.reference) {
+            <article class="order-row">
+              <div class="order-id"><strong>{{ order.reference }}</strong><span>{{ order.createdAt | date:'dd/MM/yy, HH:mm' }}</span><small>{{ order.quote.amountDelivered | currency:'USD' }} · {{ order.paymentMethod | uppercase }}</small></div>
+              <div class="beneficiary"><strong>{{ order.beneficiaryName }}</strong><span>{{ order.beneficiaryPhone }}</span><small>{{ order.municipality }} · {{ order.address }}</small></div>
+              <div class="statuses"><span class="badge" [class.ready]="canAssign(order)">{{ paymentLabel(order.paymentStatus) }}</span><span class="badge delivery">{{ deliveryLabel(order.deliveryStatus) }}</span></div>
+              <div class="delivery-actions">
+                @if (order.paymentMethod === 'euro' && order.paymentStatus === 'contact_whatsapp') {
+                  <button class="confirm-payment" type="button" (click)="confirmEuroPayment(order)">Confirmar pago EUR</button>
+                }
+                @if (!order.assignedAgentId) {
+                  <select [disabled]="!canAssign(order)" (change)="setSelectedAgent(order.reference, $any($event.target).value)">
+                    <option value="">Seleccionar agente</option>
+                    @for (agent of agents(); track agent.id) { @if (agent.active) { <option [value]="agent.id">{{ agent.name }}</option> } }
+                  </select>
+                  <button type="button" [disabled]="!canAssign(order)" (click)="assign(order)">Asignar</button>
+                } @else {
+                  <strong>{{ order.assignedAgentName }}</strong>
+                  <select [value]="order.deliveryStatus" (change)="updateDelivery(order, $any($event.target).value)">
+                    <option value="assigned">Asignada</option><option value="out_for_delivery">En camino</option><option value="delivered">Entregada</option><option value="failed">Incidencia</option><option value="cancelled">Cancelada</option>
+                  </select>
+                }
+              </div>
+            </article>
+          } @empty {
+            <div class="empty-state">No hay pedidos con estos filtros.</div>
+          }
+        </div>
+      </div>
+
+      <aside class="agents-area">
+        <div class="section-title"><div><h2>Agentes</h2><p>{{ agents().length }} registrados</p></div></div>
+        <form [formGroup]="agentForm" (ngSubmit)="createAgent()">
+          <label><span>Nombre</span><input type="text" formControlName="name" /></label>
+          <label><span>Teléfono</span><input type="tel" formControlName="phone" /></label>
+          <label><span>Zona</span><input type="text" formControlName="zone" /></label>
+          <button type="submit">Registrar agente</button>
+        </form>
+        <div class="agent-list">
+          @for (agent of agents(); track agent.id) {
+            <div><span class="agent-avatar">{{ agent.name.slice(0, 2).toUpperCase() }}</span><p><strong>{{ agent.name }}</strong><span>{{ agent.zone }}</span><small>{{ agent.phone }}</small></p><i [class.inactive]="!agent.active">{{ agent.active ? 'Activo' : 'Inactivo' }}</i></div>
+          } @empty { <p class="empty-agents">Registra el primer agente de entrega.</p> }
+        </div>
+      </aside>
+    </section>
+  </main>
+}

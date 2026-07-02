@@ -1,37 +1,69 @@
 # Remesa Clara
 
-MVP web para cotizar y registrar remesas pagadas con USDT y entregadas en USD efectivo.
+Aplicación Angular y API Node.js para registrar remesas pagadas con USDT o coordinadas en EUR, con entrega de efectivo en La Habana.
 
 ## Desarrollo
 
 ```bash
 npm install
+cd backend && npm ci && cd ..
 npm start
 ```
 
-La aplicación queda disponible en `http://127.0.0.1:4200`.
+El frontend local queda disponible en `http://127.0.0.1:4200`.
 
-## Estado actual
+## Configuración del servidor
 
-- Cotización reactiva por monto, zona y velocidad.
-- Tarifas por tramo y entrega transparentes.
-- Captura validada de remitente y beneficiario.
-- Confirmación local del pedido.
-- Diseño responsive validado en escritorio y móvil.
+Crea `.env` en la raíz del proyecto:
 
-## Integración pendiente
+```env
+TRONDEALER_API_KEY=td_clave_generada_por_trondealer
+TRONDEALER_WEBHOOK_SECRET=secreto_hexadecimal_de_64_caracteres
+ADMIN_API_KEY=otra_clave_aleatoria_de_64_caracteres
+```
 
-Angular nunca debe recibir `TRONDEALER_API_KEY` ni `TRONDEALER_WEBHOOK_SECRET`.
-El backend deberá exponer estos endpoints propios:
+Genera cada secreto local con `openssl rand -hex 32`. No reutilices el secreto del webhook como clave administrativa.
 
-- `POST /api/remittances`: guarda el pedido y asigna una wallet con TronDealer.
-- `GET /api/remittances/:reference`: devuelve estado, monto y dirección de pago.
-- `POST /api/webhooks/trondealer`: valida `X-Signature-256`, deduplica eventos y actualiza el pago.
+## Flujo de pago
 
-La entrega en efectivo sólo puede liberarse cuando el pago esté confirmado, nunca cuando esté solamente detectado.
+1. El cliente registra la orden en `POST /api/orders`.
+2. El backend asigna una wallet mediante TronDealer.
+3. El cliente paga el total exacto en USDT mediante BSC/BEP-20. No debe usar TRC-20.
+4. TronDealer notifica los estados `detected`, `confirmed`, `notified` y `swept`.
+5. La entrega sólo puede asignarse después de `confirmed`, nunca en `detected`.
+
+Webhook público:
+
+```text
+https://remesa.eav-labs.com/api/webhooks/trondealer
+```
+
+## Operaciones
+
+El panel se encuentra en `/admin`. La clave se introduce al iniciar la sesión y se conserva únicamente en `sessionStorage`.
+
+Funciones disponibles:
+
+- Listar y filtrar pedidos.
+- Registrar agentes de entrega.
+- Confirmar manualmente los pagos EUR coordinados por WhatsApp.
+- Asignar pedidos con pago confirmado.
+- Marcar entregas como asignadas, en camino, entregadas, con incidencia o canceladas.
+
+## API administrativa
+
+Todas las llamadas requieren `Authorization: Bearer <ADMIN_API_KEY>`.
+
+- `GET /api/admin/orders`
+- `GET /api/admin/agents`
+- `POST /api/admin/agents`
+- `PATCH /api/admin/orders/:reference/payment-status`
+- `PATCH /api/admin/orders/:reference/assign`
+- `PATCH /api/admin/orders/:reference/delivery-status`
 
 ## Compilación
 
 ```bash
 npm run build
+cd backend && npm run build
 ```

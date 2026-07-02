@@ -12,6 +12,22 @@ export type PaymentStatus =
   | 'expired'
   | 'contact_whatsapp';
 export type DeliverySpeed = 'standard' | 'priority';
+export type DeliveryStatus =
+  | 'unassigned'
+  | 'assigned'
+  | 'out_for_delivery'
+  | 'delivered'
+  | 'failed'
+  | 'cancelled';
+
+export interface Agent {
+  id: string;
+  name: string;
+  phone: string;
+  zone: string;
+  active: boolean;
+  createdAt: string;
+}
 
 export interface RemittanceQuote {
   amountDelivered: number;
@@ -39,5 +55,10 @@ export interface Order {
   txHash?: string;
   paidAmount?: number;
   paidNetwork?: string;
+  deliveryStatus?: DeliveryStatus;
+  assignedAgentId?: string;
+  assignedAgentName?: string;
+  assignedAt?: string;
+  deliveredAt?: string;
   createdAt: string;
 }

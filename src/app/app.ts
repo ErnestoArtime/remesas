@@ -5,10 +5,11 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaymentMethod, RemittanceOrder } from './core/models/remittance.model';
 import { QuoteService } from './core/services/quote.service';
+import { AdminComponent } from './admin/admin.component';
 
 @Component({
   selector: 'app-root',
-  imports: [CurrencyPipe, ReactiveFormsModule],
+  imports: [AdminComponent, CurrencyPipe, ReactiveFormsModule],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
@@ -21,6 +22,7 @@ export class App {
   protected readonly currentStep = signal<1 | 2 | 3>(1);
   protected readonly order = signal<RemittanceOrder | null>(null);
   protected readonly darkMode = signal(this.initialTheme() === 'dark');
+  protected readonly isAdminPage = window.location.pathname.startsWith('/admin');
 
   protected readonly quoteForm = this.formBuilder.nonNullable.group({
     amount: [100, [Validators.required, Validators.min(20), Validators.max(1500)]],
