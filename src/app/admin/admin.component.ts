@@ -36,7 +36,7 @@ interface AdminOrder {
 export class AdminComponent {
   private readonly http = inject(HttpClient);
   private readonly formBuilder = inject(FormBuilder);
-  private token = sessionStorage.getItem('remesa-admin-token') || '';
+  private token = sessionStorage.getItem('cashflowqba-admin-token') || '';
 
   protected readonly authenticated = signal(false);
   protected readonly loading = signal(false);
@@ -94,7 +94,7 @@ export class AdminComponent {
   }
 
   protected logout(): void {
-    sessionStorage.removeItem('remesa-admin-token');
+    sessionStorage.removeItem('cashflowqba-admin-token');
     this.token = '';
     this.authenticated.set(false);
     this.orders.set([]);
@@ -186,7 +186,7 @@ export class AdminComponent {
         this.agents.set(agents);
         this.authenticated.set(true);
         this.loading.set(false);
-        if (persistToken) sessionStorage.setItem('remesa-admin-token', this.token);
+        if (persistToken) sessionStorage.setItem('cashflowqba-admin-token', this.token);
       },
       error: (response) => {
         this.loading.set(false);

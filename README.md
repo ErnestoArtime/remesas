@@ -1,6 +1,6 @@
-# Remesa Clara
+# CashFlowQba
 
-Aplicación Angular y API Node.js para registrar remesas pagadas con USDT o coordinadas en EUR, con entrega de efectivo en La Habana.
+Aplicación Angular y API Node.js para registrar envíos pagados con USDT o coordinados en EUR, con entrega de efectivo en La Habana.
 
 ## Desarrollo
 
@@ -37,7 +37,7 @@ El webhook compara el importe confirmado con `totalToPay`. Los pagos insuficient
 Webhook público:
 
 ```text
-https://remesa.eav-labs.com/api/webhooks/trondealer
+https://cashflowqba.eav-labs.com/api/webhooks/trondealer
 ```
 
 ## Operaciones

@@ -1,13 +1,15 @@
+import crypto from 'crypto';
 import { Router } from 'express';
 import { Order } from '../models/order';
 import { store } from '../services/store';
 import { tronService } from '../services/trondealer';
+import { calculateQuote } from '../services/quote';
 
 export const ordersRouter = Router();
 
 function generateReference(): string {
   const year = new Date().getFullYear();
-  const suffix = Math.floor(1000 + Math.random() * 9000);
+  const suffix = crypto.randomUUID().slice(0, 8).toUpperCase();
   return `RC-${year}-${suffix}`;
 }
 
@@ -17,10 +19,6 @@ ordersRouter.post('/orders', async (req, res) => {
       paymentMethod,
       deliverySpeed,
       amountDelivered,
-      totalToPay,
-      serviceFee,
-      deliveryFee,
-      feePercentage,
       senderName,
       senderPhone,
       beneficiaryName,
@@ -37,21 +35,14 @@ ordersRouter.post('/orders', async (req, res) => {
     const reference = generateReference();
     const paymentStatus = paymentMethod === 'euro' ? 'contact_whatsapp' : 'pending_wallet';
 
-    const estimatedDelivery = deliverySpeed === 'priority' ? 'Hasta 6 horas' : 'En 24 horas';
+    const quote = calculateQuote({ amountDelivered: Number(amountDelivered) || 0, deliverySpeed });
 
     const order: Order = {
       reference,
       paymentMethod,
       paymentStatus,
       deliverySpeed,
-      quote: {
-        amountDelivered,
-        totalToPay,
-        serviceFee,
-        deliveryFee,
-        feePercentage,
-        estimatedDelivery,
-      },
+      quote,
       senderName,
       senderPhone,
       beneficiaryName,

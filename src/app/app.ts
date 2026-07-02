@@ -114,7 +114,7 @@ export class App {
     const theme = this.darkMode() ? 'light' : 'dark';
     this.darkMode.set(theme === 'dark');
     this.applyTheme(theme);
-    localStorage.setItem('remesa-clara-theme', theme);
+    localStorage.setItem('cashflowqba-theme', theme);
   }
 
   protected fieldInvalid(form: 'quote' | 'details', field: string): boolean {
@@ -127,7 +127,7 @@ export class App {
   }
 
   private initialTheme(): 'light' | 'dark' {
-    const savedTheme = localStorage.getItem('remesa-clara-theme');
+    const savedTheme = localStorage.getItem('cashflowqba-theme');
     if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme;
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }

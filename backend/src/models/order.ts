@@ -40,6 +40,17 @@ export interface RemittanceQuote {
   estimatedDelivery: string;
 }
 
+export interface PaymentEvent {
+  txHash: string;
+  logIndex: string;
+  status: string;
+  amount: string;
+  network: string;
+  rawBody: string;
+  signature: string;
+  receivedAt: string;
+}
+
 export interface Order {
   reference: string;
   paymentMethod: PaymentMethod;
@@ -63,4 +74,5 @@ export interface Order {
   assignedAt?: string;
   deliveredAt?: string;
   createdAt: string;
+  paymentEvents?: PaymentEvent[];
 }
