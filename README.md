@@ -37,7 +37,7 @@ El webhook compara el importe confirmado con `totalToPay`. Los pagos insuficient
 Webhook público:
 
 ```text
-https://cashflowqba.eav-labs.com/api/webhooks/trondealer
+https://remesa.eav-labs.com/api/webhooks/trondealer
 ```
 
 ## Operaciones
