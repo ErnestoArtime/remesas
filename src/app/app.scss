@@ -127,6 +127,11 @@ fieldset legend { margin-bottom: 10px; }
 .confirmation-mark { align-items: center; background: var(--green-pale); border-radius: 50%; color: var(--green); display: inline-flex; font-size: 24px; font-weight: 800; height: 54px; justify-content: center; margin-bottom: 22px; width: 54px; }
 .confirmation-content h3 { font-size: 30px; margin-bottom: 10px; }
 .confirmation-content > p:not(.eyebrow) { color: var(--muted); line-height: 1.6; margin: 0 auto 26px; max-width: 560px; }
+.payment-instructions { margin: 0 auto 16px; max-width: 560px; text-align: center; }
+.payment-instructions p { margin: 0 0 12px; }
+.network-warning { background: #fff3cd; border: 1px solid #e6c952; border-radius: 6px; color: #664d03; font-size: 12px; line-height: 1.5; padding: 10px 14px; }
+:host-context([data-theme="dark"]) .network-warning { background: #332b08; border-color: #665710; color: #e8d88a; }
+
 .payment-status { align-items: center; background: #fff8eb; border: 1px solid #eed8af; border-radius: 6px; display: flex; gap: 14px; margin: 0 auto 24px; max-width: 560px; padding: 16px; text-align: left; }
 .payment-status div { display: flex; flex-direction: column; gap: 3px; }
 .payment-status strong { font-size: 13px; }

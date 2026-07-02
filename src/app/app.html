@@ -213,7 +213,13 @@
 
             @if (currentOrder.paymentMethod === 'usdt') {
               @if (currentOrder.tronWalletAddress) {
-                <p>Envía el monto exacto en USDT (BSC) a la dirección de abajo.</p>
+                <div class="payment-instructions">
+                  <p>Envía el monto exacto en USDT a la dirección de abajo.</p>
+                  <div class="network-warning">
+                    <strong>IMPORTANTE:</strong> envía únicamente USDT por red <strong>BSC / BEP-20</strong>.
+                    No uses TRC-20, ERC-20, Solana ni otra red. Si envías por otra red, el pago puede no acreditarse automáticamente.
+                  </div>
+                </div>
                 <div class="payment-status wallet-address">
                   <div>
                     <strong>Dirección de pago</strong>
