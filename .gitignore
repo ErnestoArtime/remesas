@@ -40,6 +40,10 @@ testem.log
 /typings
 __screenshots__/
 
+# Local runtime configuration and persistent data
+.env
+/backend/data/
+
 # System files
 .DS_Store
 Thumbs.db
