@@ -6,7 +6,9 @@
     "start": "ng serve",
     "build": "ng build",
     "build:prod": "ng build --configuration production",
-    "watch": "ng build --watch --configuration development"
+    "watch": "ng build --watch --configuration development",
+    "start:api": "cd backend && npm run dev",
+    "dev": "concurrently --kill-others \"npm run start:api\" \"npm run start\""
   },
   "private": true,
   "packageManager": "npm@10.9.3",
@@ -24,6 +26,7 @@
     "@angular/build": "^21.2.17",
     "@angular/cli": "^21.2.17",
     "@angular/compiler-cli": "^21.2.0",
+    "concurrently": "^10.0.3",
     "typescript": "~5.9.2"
   }
 }

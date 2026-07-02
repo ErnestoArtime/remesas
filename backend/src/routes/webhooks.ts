@@ -41,18 +41,33 @@ webhooksRouter.post(
       return res.status(401).send('invalid signature');
     }
 
-    const event = JSON.parse(req.body.toString());
+    let event: Record<string, unknown>;
+    try {
+      event = JSON.parse(req.body.toString());
+    } catch {
+      return res.status(400).send('invalid json');
+    }
+
     const { label, status } = event;
-    const txHash = event.txHash || event.tx_hash || '';
-    const logIndex = event.logIndex || event.log_index || '';
+    const txHash = (event.txHash || event.tx_hash || '') as string;
+    const logIndex = (event.logIndex || event.log_index || '') as string;
     const amount = event.amount;
-    const network = event.network;
+    const network = event.network as string | undefined;
 
     if (label && status) {
-      const orderStatus = STATUS_MAP[status];
+      const orderStatus = STATUS_MAP[status as string];
       if (orderStatus) {
-        const order = store.findByReference(label);
+        const order = store.findByReference(label as string);
         if (order) {
+          const alreadyProcessed = order.paymentEvents?.some(
+            (e) => e.txHash === txHash && e.logIndex === logIndex && e.status === status,
+          );
+
+          if (alreadyProcessed) {
+            console.log(`[webhook] ${label} → ${status} duplicado ignorado (tx: ${txHash})`);
+            return res.status(200).send('duplicate ignored');
+          }
+
           if (txHash) order.txHash = txHash;
           const eventAmount = Number(amount);
           if (amount !== undefined && Number.isFinite(eventAmount)) order.paidAmount = eventAmount;
@@ -74,7 +89,7 @@ webhooksRouter.post(
           const paymentEvent: PaymentEvent = {
             txHash,
             logIndex,
-            status,
+            status: status as string,
             amount: amount !== undefined ? String(amount) : '',
             network: network || '',
             rawBody: req.body.toString(),
