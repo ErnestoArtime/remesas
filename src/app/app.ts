@@ -34,11 +34,13 @@ export class App {
   protected readonly detailsForm = this.formBuilder.nonNullable.group({
     senderName: ['', [Validators.required, Validators.minLength(3)]],
     senderPhone: ['', [Validators.required, Validators.pattern(/^\+?[0-9 ()-]{8,20}$/)]],
+    senderChatId: [''],
     beneficiaryName: ['', [Validators.required, Validators.minLength(3)]],
     beneficiaryPhone: ['', [Validators.required, Validators.pattern(/^\+?[0-9 ()-]{8,20}$/)]],
     municipality: ['', [Validators.required, Validators.minLength(2)]],
     address: ['', [Validators.required, Validators.minLength(8)]],
     notes: [''],
+    isSurprise: [false],
     consent: [false, Validators.requiredTrue],
   });
 
@@ -86,11 +88,13 @@ export class App {
       feePercentage: quote.feePercentage,
       senderName: details.senderName,
       senderPhone: details.senderPhone,
+      senderChatId: details.senderChatId,
       beneficiaryName: details.beneficiaryName,
       beneficiaryPhone: details.beneficiaryPhone,
       municipality: details.municipality,
       address: details.address,
       notes: details.notes,
+      isSurprise: details.isSurprise,
     }).subscribe({
       next: (order: any) => {
         this.order.set(order);

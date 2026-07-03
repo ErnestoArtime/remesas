@@ -26,6 +26,8 @@ ordersRouter.post('/orders', async (req, res) => {
       municipality,
       address,
       notes,
+      isSurprise,
+      senderChatId,
     } = req.body;
 
     if (!senderName || !beneficiaryName || !municipality) {
@@ -50,6 +52,8 @@ ordersRouter.post('/orders', async (req, res) => {
       municipality,
       address,
       notes: notes || '',
+      isSurprise: Boolean(isSurprise),
+      senderChatId: senderChatId || '',
       deliveryStatus: 'unassigned',
       createdAt: new Date().toISOString(),
     };

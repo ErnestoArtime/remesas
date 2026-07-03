@@ -101,6 +101,14 @@ fieldset legend { margin-bottom: 10px; }
 .form-subsection h4 { font-size: 14px; margin-bottom: 0; }
 .two-column { display: grid; gap: 18px; grid-template-columns: 1fr 1fr; }
 .error-text { color: var(--error); font-size: 11px; line-height: 1.35; }
+.wa-notification-row { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; grid-column: 1 / -1; }
+.chatid-field input { font-family: monospace; font-size: 13px; }
+.chatid-field small { color: #6a7b72; display: block; font-size: 11px; margin-top: 3px; }
+.surprise-field { align-items: center; display: flex; gap: 8px; font-size: 13px; cursor: pointer; }
+.surprise-field input { height: 16px; width: 16px; }
+:host-context([data-theme="dark"]) .surprise-field { color: #cbd5e1; }
+:host-context([data-theme="dark"]) .chatid-field small { color: #94a3b8; }
+
 .consent-field { align-items: start; color: #46534d; display: grid; font-size: 12px; gap: 10px; grid-template-columns: 18px 1fr; line-height: 1.5; }
 .consent-field input { height: 16px; margin: 1px 0 0; width: 16px; }
 .consent-error { margin-top: -22px; }

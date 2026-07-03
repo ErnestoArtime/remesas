@@ -74,5 +74,7 @@ export interface Order {
   assignedAt?: string;
   deliveredAt?: string;
   createdAt: string;
+  isSurprise?: boolean;
+  senderChatId?: string;
   paymentEvents?: PaymentEvent[];
 }

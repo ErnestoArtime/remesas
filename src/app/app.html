@@ -154,12 +154,23 @@
                   <input type="text" formControlName="senderName" autocomplete="name" [class.invalid]="fieldInvalid('details', 'senderName')" />
                   @if (fieldInvalid('details', 'senderName')) { <small class="error-text">Escribe el nombre completo.</small> }
                 </label>
-                <label class="field">
-                  <span>Teléfono o WhatsApp</span>
-                  <input type="tel" formControlName="senderPhone" autocomplete="tel" placeholder="+1 555 000 0000" [class.invalid]="fieldInvalid('details', 'senderPhone')" />
-                  @if (fieldInvalid('details', 'senderPhone')) { <small class="error-text">Revisa el número indicado.</small> }
-                </label>
-              </div>
+                  <label class="field">
+                    <span>Teléfono o WhatsApp</span>
+                    <input type="tel" formControlName="senderPhone" autocomplete="tel" placeholder="+1 555 000 0000" [class.invalid]="fieldInvalid('details', 'senderPhone')" />
+                    @if (fieldInvalid('details', 'senderPhone')) { <small class="error-text">Revisa el número indicado.</small> }
+                  </label>
+                  <div class="wa-notification-row">
+                    <label class="field chatid-field">
+                      <span>Chat ID para notificación <em>Opcional</em></span>
+                      <input type="text" formControlName="senderChatId" placeholder="5350000000@c.us" />
+                      <small>Si quieres recibir aviso por WhatsApp al asignar la entrega, indica tu Chat ID.</small>
+                    </label>
+                    <label class="surprise-field">
+                      <input type="checkbox" formControlName="isSurprise" />
+                      <span>Es sorpresa — no notificar al remitente</span>
+                    </label>
+                  </div>
+                </div>
             </div>
 
             <div class="form-subsection">

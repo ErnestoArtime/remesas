@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import { NextFunction, Request, Response, Router } from 'express';
 import { Agent, DeliveryStatus, PaymentStatus } from '../models/order';
 import { store } from '../services/store';
+import { notifyAdminAssignment, notifySenderDelivery } from '../services/openwa';
 
 export const adminRouter = Router();
 
@@ -99,6 +100,25 @@ adminRouter.patch('/orders/:reference/assign', (req, res) => {
   order.assignedAt = new Date().toISOString();
   order.deliveryStatus = 'assigned';
   store.save(order);
+
+  notifyAdminAssignment({
+    reference: order.reference,
+    beneficiaryName: order.beneficiaryName,
+    municipality: order.municipality,
+    assignedAgentName: agent.name,
+  });
+
+  if (!order.isSurprise && order.senderChatId) {
+    notifySenderDelivery({
+      reference: order.reference,
+      beneficiaryName: order.beneficiaryName,
+      municipality: order.municipality,
+      assignedAgentName: agent.name,
+      senderName: order.senderName,
+      senderChatId: order.senderChatId,
+    });
+  }
+
   res.json(order);
 });
 
