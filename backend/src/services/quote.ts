@@ -30,7 +30,7 @@ export function calculateQuote(params: CalculateParams): CalculatedQuote {
   const tier = feeTiers.find((item) => amount <= item.maximum) ?? feeTiers.at(-1)!;
   const serviceFee = Math.max((amount * tier.percentage) / 100, tier.minimumFee);
   const priorityFee = params.deliverySpeed === 'priority' ? 5 : 0;
-  const deliveryFee = 3 + priorityFee;
+  const deliveryFee = 0 + priorityFee;
 
   return {
     amountDelivered: round(amount),

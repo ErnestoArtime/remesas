@@ -50,23 +50,29 @@
               <div class="order-id"><strong>{{ order.reference }}</strong><span>{{ order.createdAt | date:'dd/MM/yy, HH:mm' }}</span><small>{{ order.quote.amountDelivered | currency:'USD' }} · {{ order.paymentMethod | uppercase }}</small></div>
               <div class="beneficiary"><strong>{{ order.beneficiaryName }}</strong><span>{{ order.beneficiaryPhone }}</span><small>{{ order.municipality }} · {{ order.address }}</small></div>
               <div class="statuses"><span class="badge" [class.ready]="canAssign(order)">{{ paymentLabel(order.paymentStatus) }}</span><span class="badge delivery">{{ deliveryLabel(order.deliveryStatus) }}</span></div>
-              <div class="delivery-actions">
-                @if (order.paymentMethod === 'euro' && order.paymentStatus === 'contact_whatsapp') {
-                  <button class="confirm-payment" type="button" (click)="confirmEuroPayment(order)">Confirmar pago EUR</button>
-                }
-                @if (!order.assignedAgentId) {
-                  <select [disabled]="!canAssign(order)" (change)="setSelectedAgent(order.reference, $any($event.target).value)">
-                    <option value="">Seleccionar agente</option>
-                    @for (agent of agents(); track agent.id) { @if (agent.active) { <option [value]="agent.id">{{ agent.name }}</option> } }
-                  </select>
-                  <button type="button" [disabled]="!canAssign(order)" (click)="assign(order)">Asignar</button>
-                } @else {
-                  <strong>{{ order.assignedAgentName }}</strong>
-                  <select [value]="order.deliveryStatus" (change)="updateDelivery(order, $any($event.target).value)">
-                    <option value="assigned">Asignada</option><option value="out_for_delivery">En camino</option><option value="delivered">Entregada</option><option value="failed">Incidencia</option><option value="cancelled">Cancelada</option>
-                  </select>
-                }
-              </div>
+                <div class="delivery-actions">
+                  @if (order.paymentMethod === 'euro' && order.paymentStatus === 'contact_whatsapp') {
+                    <button class="confirm-payment" type="button" (click)="confirmEuroPayment(order)">Confirmar pago EUR</button>
+                  }
+                  @if (!order.assignedAgentId) {
+                    <select [disabled]="!canAssign(order)" (change)="setSelectedAgent(order.reference, $any($event.target).value)">
+                      <option value="">Seleccionar agente</option>
+                      @for (agent of agents(); track agent.id) { @if (agent.active) { <option [value]="agent.id">{{ agent.name }}</option> } }
+                    </select>
+                    <button type="button" [disabled]="!canAssign(order)" (click)="assign(order)">Asignar</button>
+                  } @else {
+                    <strong>{{ order.assignedAgentName }}</strong>
+                    <select [value]="order.deliveryStatus" (change)="updateDelivery(order, $any($event.target).value)">
+                      <option value="assigned">Asignada</option><option value="out_for_delivery">En camino</option><option value="delivered">Entregada</option><option value="failed">Incidencia</option><option value="cancelled">Cancelada</option>
+                    </select>
+                  }
+                  <div class="delivery-fee-row">
+                    <label>Costo entrega: $
+                      <input type="number" min="0" step="0.01" [value]="order.quote.deliveryFee" (input)="setDeliveryFeeInput(order.reference, $any($event.target).value)" class="fee-input" />
+                    </label>
+                    <button type="button" (click)="updateDeliveryFee(order)">Fijar</button>
+                  </div>
+                </div>
             </article>
           } @empty {
             <div class="empty-state">No hay pedidos con estos filtros.</div>

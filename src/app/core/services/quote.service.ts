@@ -22,7 +22,7 @@ export class QuoteService {
   ];
 
   private readonly deliveryFees: Record<DeliveryZone, number> = {
-    havana: 3,
+    havana: 0,
   };
 
   calculate(request: QuoteRequest): RemittanceQuote {

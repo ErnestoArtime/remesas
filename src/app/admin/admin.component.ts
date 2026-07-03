@@ -23,7 +23,7 @@ interface AdminOrder {
   beneficiaryPhone: string;
   municipality: string;
   address: string;
-  quote: { amountDelivered: number; totalToPay: number };
+  quote: { amountDelivered: number; totalToPay: number; deliveryFee: number };
   createdAt: string;
 }
 
@@ -47,6 +47,7 @@ export class AdminComponent {
   protected readonly search = signal('');
   protected readonly statusFilter = signal('all');
   protected readonly selectedAgents: Record<string, string> = {};
+  protected readonly deliveryFeeInputs: Record<string, string> = {};
 
   protected readonly loginForm = this.formBuilder.nonNullable.group({
     token: ['', Validators.required],
@@ -136,6 +137,16 @@ export class AdminComponent {
 
   protected confirmEuroPayment(order: AdminOrder): void {
     this.patchOrder(order.reference, 'payment-status', {}, 'Pago EUR confirmado. Ya puedes asignar la entrega.');
+  }
+
+  protected updateDeliveryFee(order: AdminOrder): void {
+    const fee = this.deliveryFeeInputs[order.reference];
+    if (fee === undefined || fee === '') return;
+    this.patchOrder(order.reference, 'delivery-fee', { deliveryFee: Number(fee) }, 'Costo de entrega actualizado.');
+  }
+
+  protected setDeliveryFeeInput(reference: string, fee: string): void {
+    this.deliveryFeeInputs[reference] = fee;
   }
 
   protected updateDelivery(order: AdminOrder, status: string): void {

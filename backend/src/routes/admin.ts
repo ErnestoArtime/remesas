@@ -118,6 +118,25 @@ adminRouter.patch('/orders/:reference/payment-status', (req, res) => {
   res.json(order);
 });
 
+adminRouter.patch('/orders/:reference/delivery-fee', (req, res) => {
+  const order = store.findByReference(req.params.reference);
+  if (!order) {
+    res.status(404).json({ error: 'Orden no encontrada' });
+    return;
+  }
+
+  const fee = Number(req.body.deliveryFee);
+  if (!Number.isFinite(fee) || fee < 0) {
+    res.status(400).json({ error: 'El costo de entrega debe ser un número válido mayor o igual a 0' });
+    return;
+  }
+
+  order.quote.deliveryFee = Math.round(fee * 100) / 100;
+  order.quote.totalToPay = Math.round((order.quote.amountDelivered + order.quote.serviceFee + order.quote.deliveryFee) * 100) / 100;
+  store.save(order);
+  res.json(order);
+});
+
 adminRouter.patch('/orders/:reference/delivery-status', (req, res) => {
   const order = store.findByReference(req.params.reference);
   const status = req.body.status as DeliveryStatus;
