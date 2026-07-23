@@ -336,3 +336,7 @@ verificados de extremo a extremo.
   métodos disponibles de los catálogos operativos.
 - Validación visual completada a 1440 px y 390 px sin desbordamiento horizontal;
   la auditoría automatizada WCAG 2 A/AA finalizó sin violaciones.
+- Publicada la iteración visual en `main` y desplegada en
+  `https://remesa.eav-labs.com/`; el frontend quedó `healthy`, la portada y
+  `/api/health` responden `200`, la imagen carga y los tres métodos activos se
+  muestran correctamente en la verificación móvil de producción.
