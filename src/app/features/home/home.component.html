@@ -16,6 +16,7 @@
   </a>
   <nav aria-label="Navegación principal">
     <a routerLink="/como-funciona">Cómo funciona</a>
+    <a href="#seguimiento">Seguimiento</a>
     <a href="#tarifas">Tarifas</a>
     <a routerLink="/ayuda">Ayuda</a>
   </nav>
@@ -38,36 +39,47 @@
 <main id="inicio">
   <section class="intro-band" aria-labelledby="page-title">
     <div class="intro-copy">
-      <p class="eyebrow">Envíos con entrega en efectivo</p>
-      <h1 id="page-title">Tu familia recibe el monto acordado. Sin cargos sorpresa.</h1>
+      <p class="eyebrow">Remesas a Cuba con seguimiento real</p>
+      <h1 id="page-title">Envía dinero a Cuba con claridad, seguridad y seguimiento.</h1>
       <p class="intro-text">
         Elige entre los métodos habilitados y coordinamos la entrega de dólares en efectivo al beneficiario en La Habana.
         Conoce el total antes de confirmar.
       </p>
-      <div class="trust-row" aria-label="Características del servicio">
-        <span>Precio cerrado</span>
-        <span>Seguimiento por pedido</span>
-        <span>Entrega verificada</span>
+      <div class="intro-actions">
+        <a class="primary-button hero-button" href="#enviar">Calcular envío</a>
+        <a class="text-action" routerLink="/como-funciona">Ver cómo funciona <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="trust-row" role="list" aria-label="Características del servicio">
+        <span role="listitem">Precio cerrado</span>
+        <span role="listitem">Progreso de blockchain</span>
+        <span role="listitem">Atención humana</span>
       </div>
     </div>
-    <aside class="service-visual" aria-label="Cobertura del servicio">
-      <div class="visual-topline">
-        <span class="status-dot"></span>
-        Operación disponible
-      </div>
-      <div class="route-map" aria-hidden="true">
-        <span class="route-origins">
-          <span class="route-pill">Cripto</span>
-          <span class="route-pill sep">EUR</span>
-        </span>
-        <span class="route-line"></span>
-        <span class="route-destination">USD</span>
-      </div>
-      <div class="visual-details">
-        <div><strong>20–1,500</strong><span>USD por envío</span></div>
-        <div><strong>La Habana</strong><span>Entrega en 24 h</span></div>
-      </div>
-    </aside>
+    <figure class="hero-visual">
+      <img
+        src="/images/cashflowqba-havana-hero.webp"
+        width="1536"
+        height="1024"
+        fetchpriority="high"
+        alt="Entrega coordinada en una vivienda de La Habana"
+      />
+      <figcaption class="hero-status-card">
+        <div class="visual-topline">
+          <span class="status-dot"></span>
+          Servicio activo en La Habana
+        </div>
+        <div class="hero-route" role="group" aria-label="Ruta de pago y entrega">
+          <span>Cripto o EUR</span>
+          <i aria-hidden="true"></i>
+          <strong>USD efectivo</strong>
+        </div>
+        @if (deliveryMethods()[0]; as primaryDelivery) {
+          <small>
+            Plazo estimado: {{ primaryDelivery.estimatedMinHours }}–{{ primaryDelivery.estimatedMaxHours }} horas
+          </small>
+        }
+      </figcaption>
+    </figure>
   </section>
 
   <section class="remittance-section" id="enviar" aria-labelledby="tool-title">
@@ -376,6 +388,78 @@
       <li><span>03</span><div><h3>Confirmamos la operación</h3><p>Validamos el pago y liberamos la entrega para su coordinación.</p></div></li>
       <li><span>04</span><div><h3>Entregamos y verificamos</h3><p>El beneficiario confirma el monto recibido con un código de seguridad.</p></div></li>
     </ol>
+  </section>
+
+  <section class="tracking-showcase" id="seguimiento" aria-labelledby="tracking-showcase-title">
+    <div class="tracking-copy">
+      <p class="eyebrow">Seguimiento en tiempo real</p>
+      <h2 id="tracking-showcase-title">Sabes dónde está tu remesa en cada momento.</h2>
+      <p>
+        Cada pedido tiene un enlace privado. La barra de blockchain conserva siempre
+        el mayor número de confirmaciones recibido y la entrega permanece bloqueada hasta confirmar el pago.
+      </p>
+      <a routerLink="/como-funciona" class="text-action">Conocer el proceso <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="tracking-demo" role="group" aria-label="Ejemplo visual del seguimiento de una remesa">
+      <div class="demo-heading"><span>Ejemplo de seguimiento</span><strong>Actualizado ahora</strong></div>
+      <ol class="demo-timeline">
+        <li class="complete"><span>✓</span><div><strong>Solicitud registrada</strong><small>Datos verificados</small></div></li>
+        <li class="complete"><span>✓</span><div><strong>Pago detectado</strong><small>USDT · BSC</small></div></li>
+        <li class="current"><span>3</span><div><strong>Confirmando en blockchain</strong><small>La entrega sigue bloqueada</small></div></li>
+        <li><span>4</span><div><strong>Preparando entrega</strong><small>Pendiente de confirmación</small></div></li>
+      </ol>
+      <div class="demo-progress">
+        <div><span>Confirmaciones</span><strong>7 de 15</strong></div>
+        <div class="demo-progress-track"><span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="benefits-section" aria-labelledby="benefits-title">
+    <div class="section-heading">
+      <p class="eyebrow">Por qué CashFlowQba</p>
+      <h2 id="benefits-title">Tecnología clara, acompañamiento humano.</h2>
+    </div>
+    <div class="benefit-grid">
+      <article><span aria-hidden="true">01</span><h3>Precio cerrado</h3><p>La cotización queda bloqueada antes de generar las instrucciones de pago.</p></article>
+      <article><span aria-hidden="true">02</span><h3>Seguimiento privado</h3><p>Consulta el progreso sin exponer teléfonos, dirección ni datos del agente.</p></article>
+      <article><span aria-hidden="true">03</span><h3>Pago controlado</h3><p>La entrega solo se habilita cuando TronDealer confirma la transacción.</p></article>
+      <article><span aria-hidden="true">04</span><h3>Soporte operativo</h3><p>La referencia conecta el pago, la coordinación y el historial de la entrega.</p></article>
+    </div>
+  </section>
+
+  <section class="methods-section" aria-labelledby="methods-title">
+    <div class="section-heading">
+      <p class="eyebrow">Opciones disponibles</p>
+      <h2 id="methods-title">Solo mostramos servicios que están activos.</h2>
+      <p>Activos, redes, límites y plazos provienen del catálogo operativo del backend.</p>
+    </div>
+    <div class="method-columns">
+      <div>
+        <h3>Cómo puedes pagar</h3>
+        <div class="method-list">
+          @for (option of paymentOptions(); track option.id) {
+            <article>
+              <span class="method-symbol">{{ option.asset.slice(0, 1) }}</span>
+              <div><strong>{{ option.asset }}</strong><small>{{ option.network === 'manual' ? 'IBAN o Bizum' : option.network.toUpperCase() }} · {{ option.estimatedConfirmationTime }}</small></div>
+              <i>Activo</i>
+            </article>
+          }
+        </div>
+      </div>
+      <div>
+        <h3>Cómo recibe tu familiar</h3>
+        <div class="method-list">
+          @for (method of deliveryMethods(); track method.id) {
+            <article>
+              <span class="method-symbol">→</span>
+              <div><strong>{{ method.name }}</strong><small>{{ method.description }} · {{ method.estimatedMinHours }}–{{ method.estimatedMaxHours }} h</small></div>
+              <i>Activo</i>
+            </article>
+          }
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="rates-section" id="tarifas" aria-labelledby="rates-title">

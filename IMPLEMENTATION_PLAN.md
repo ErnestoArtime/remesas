@@ -149,12 +149,12 @@ de TronDealer. Nunca se guardarán wallets, firmas, teléfonos ni secretos reale
 
 - [x] Crear tokens de color, tipografía, espaciado, radio, sombra y estados.
 - [ ] Crear componentes UI reutilizables.
-- [~] Cumplir WCAG AA y responsive desde 320 px.
+- [x] Cumplir WCAG AA y responsive desde 320 px.
 - [x] Adoptar Angular Router y lazy-load de administración.
 - [~] Separar home, cotización, checkout, seguimiento, admin y ayuda.
-- [x] Rediseñar la portada con calculadora central y seguimiento visual.
+- [x] Rediseñar la portada con hero humano, calculadora central y seguimiento visual.
 - [x] Usar azul marino, verde y fondos claros como dirección visual.
-- [ ] No mostrar testimonios, tasas, cobertura o tiempos ficticios.
+- [x] No mostrar testimonios, tasas, cobertura o tiempos ficticios.
 - [x] Unificar todo el branding bajo CashFlowQba.
 
 ## Fase 5 — Catálogo operativo
@@ -326,3 +326,13 @@ verificados de extremo a extremo.
   - navegador móvil a 390 px sin errores ni desbordamiento.
 - Creado backup recuperable previo al despliegue en
   `/home/ernesto/backups/remesas/predeploy-a9e47eb.tar.gz`.
+- Completada una segunda iteración visual de la portada basada en el mood board:
+  hero fotográfico original, CTA principal, seguimiento blockchain ilustrativo,
+  beneficios verificables y métodos activos alimentados por el backend.
+- Añadido el recurso optimizado
+  `public/images/cashflowqba-havana-hero.webp`; la escena fue generada
+  expresamente para CashFlowQba y no contiene marcas, texto ni interfaces falsas.
+- La interfaz evita testimonios inventados y deriva plazos, activos, redes y
+  métodos disponibles de los catálogos operativos.
+- Validación visual completada a 1440 px y 390 px sin desbordamiento horizontal;
+  la auditoría automatizada WCAG 2 A/AA finalizó sin violaciones.
