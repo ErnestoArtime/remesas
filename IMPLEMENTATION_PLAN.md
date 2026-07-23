@@ -351,3 +351,6 @@ verificados de extremo a extremo.
 - Verificado que los 23 elementos aparecen al recorrer la página, que no existe
   desbordamiento horizontal y que `prefers-reduced-motion` desactiva totalmente
   el movimiento. La auditoría WCAG 2 A/AA continúa sin violaciones.
+- Animaciones y nueva marca desplegadas en producción; el contenedor frontend
+  quedó `healthy` y la prueba móvil pública confirmó 23/23 apariciones, favicon
+  cargado y 0 px de desbordamiento horizontal.
