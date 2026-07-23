@@ -388,7 +388,7 @@
       <div role="row"><span role="columnheader">Monto</span><span role="columnheader">Servicio</span></div>
       @for (tier of feeSchedule(); track tier.minimum) {
         <div role="row">
-          <span role="cell">{{ tier.minimum | currency:'USD':'symbol':'1.0-0' }}–{{ tier.maximum | currency:'USD':'symbol':'1.0-0' }}</span>
+          <span role="cell">{{ tier.minimum | currency:'USD':'symbol':'1.0-2' }}–{{ tier.maximum | currency:'USD':'symbol':'1.0-2' }}</span>
           <strong role="cell">
             {{ tier.percentage }}%
             @if (tier.minimumFee) { · mínimo {{ tier.minimumFee | currency:'USD':'symbol':'1.0-0' }} }

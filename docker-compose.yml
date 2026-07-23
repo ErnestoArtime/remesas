@@ -3,6 +3,7 @@ name: remesas
 networks:
   proxy:
     external: true
+  app:
 
 services:
   backend:
@@ -34,6 +35,7 @@ services:
       start_period: 10s
     networks:
       - proxy
+      - app
 
   frontend:
     build:
@@ -54,3 +56,5 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+    networks:
+      - app
