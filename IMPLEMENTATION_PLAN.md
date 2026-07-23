@@ -310,3 +310,19 @@ verificados de extremo a extremo.
   seguimiento tokenizado y panel administrativo correctos, sin overlay de error.
 - La orden y cotizaciones sintéticas usadas durante la prueba fueron retiradas
   de los ficheros locales al finalizar.
+- Publicada la rama `agent/cashflowqba-payments-tracking` mediante `git` con
+  commits separados de funcionalidad, preparación del VPS y corrección de red.
+- Construidas desde cero las imágenes Docker de frontend y backend.
+- Desplegado CashFlowQba en el VPS mediante Docker Compose.
+- Añadida una red de aplicación compartida para resolución segura
+  frontend/backend, manteniendo el backend en la red `proxy` para OpenWA.
+- Verificación en producción:
+  - `https://remesa.eav-labs.com/` carga CashFlowQba;
+  - `/api/health` devuelve `200`;
+  - opciones de pago, métodos de entrega y tarifas devuelven `200`;
+  - `/api/admin/orders` sin token devuelve `401`;
+  - el antiguo `/api/orders` devuelve `404`;
+  - frontend y backend figuran `healthy`;
+  - navegador móvil a 390 px sin errores ni desbordamiento.
+- Creado backup recuperable previo al despliegue en
+  `/home/ernesto/backups/remesas/predeploy-a9e47eb.tar.gz`.
