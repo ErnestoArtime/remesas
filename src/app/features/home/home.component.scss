@@ -1,3 +1,5 @@
+:host { display: block; overflow-x: hidden; overflow-x: clip; }
+
 .service-announcement { background: var(--primary-navy); color: white; font-size: 13px; font-weight: 700; padding: 10px 16px; text-align: center; }
 .service-announcement.promotion { background: var(--primary-green); }
 .service-announcement.warning { background: #8a5b12; }
