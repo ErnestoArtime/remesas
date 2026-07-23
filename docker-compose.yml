@@ -9,10 +9,13 @@ services:
     build:
       context: ./backend
     environment:
+      - NODE_ENV=production
       - PORT=3001
       - TRONDEALER_API_KEY=${TRONDEALER_API_KEY:-}
       - TRONDEALER_WEBHOOK_SECRET=${TRONDEALER_WEBHOOK_SECRET:-}
       - ADMIN_API_KEY=${ADMIN_API_KEY:-}
+      - CORS_ORIGIN=${CORS_ORIGIN:-https://remesa.eav-labs.com}
+      - PAYMENT_TOLERANCE_USD=${PAYMENT_TOLERANCE_USD:-0.05}
       - OPENWA_BASE_URL=${OPENWA_BASE_URL:-http://openwa-api:2785/api}
       - OPENWA_API_KEY=${OPENWA_API_KEY:-}
       - OPENWA_SESSION_ID=${OPENWA_SESSION_ID:-}
@@ -23,6 +26,12 @@ services:
     mem_limit: 1g
     cpus: 1.0
     pids_limit: 256
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:3001/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     networks:
       - proxy
 
@@ -33,7 +42,8 @@ services:
     ports:
       - "127.0.0.1:3000:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     restart: unless-stopped
     mem_limit: 256m
     cpus: 0.50

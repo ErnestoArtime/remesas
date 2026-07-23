@@ -20,6 +20,8 @@ Crea `.env` en la raíz del proyecto:
 TRONDEALER_API_KEY=td_clave_generada_por_trondealer
 TRONDEALER_WEBHOOK_SECRET=secreto_hexadecimal_de_64_caracteres
 ADMIN_API_KEY=otra_clave_aleatoria_de_64_caracteres
+CORS_ORIGIN=https://remesa.eav-labs.com
+PAYMENT_TOLERANCE_USD=0.05
 ```
 
 Genera cada secreto local con `openssl rand -hex 32`. No reutilices el secreto del webhook como clave administrativa.
@@ -28,9 +30,10 @@ Genera cada secreto local con `openssl rand -hex 32`. No reutilices el secreto d
 
 1. El cliente registra la orden en `POST /api/orders`.
 2. El backend asigna una wallet mediante TronDealer.
-3. El cliente paga el total exacto en USDT mediante BSC/BEP-20. No debe usar TRC-20.
-4. TronDealer notifica los estados `detected`, `confirmed`, `notified` y `swept`.
-5. La entrega sólo puede asignarse después de `confirmed`, nunca en `detected`.
+3. El cliente paga el activo y la red habilitados en la cotización.
+4. TronDealer notifica `incoming`, `confirmation_update`, `confirmed` y `swept`.
+5. `confirmation_update` solo alimenta el progreso visual.
+6. La entrega sólo puede asignarse después de `confirmed`, nunca en `detected` o `confirming`.
 
 El webhook compara el importe confirmado con `totalToPay`. Los pagos insuficientes quedan en `underpaid` y los eventos sin importe verificable en `payment_review`; ninguno puede asignarse para entrega.
 
@@ -58,6 +61,13 @@ Todas las llamadas requieren `Authorization: Bearer <ADMIN_API_KEY>`.
 
 - `GET /api/admin/orders`
 - `GET /api/admin/agents`
+- `GET /api/admin/payment-options`
+- `PATCH /api/admin/payment-options/:id`
+- `GET /api/admin/delivery-methods`
+- `PATCH /api/admin/delivery-methods/:id`
+- `GET /api/admin/notifications`
+- `GET /api/admin/audit-logs`
+- `GET /api/admin/reconciliation`
 - `POST /api/admin/agents`
 - `PATCH /api/admin/orders/:reference/payment-status`
 - `PATCH /api/admin/orders/:reference/assign`
@@ -69,3 +79,24 @@ Todas las llamadas requieren `Authorization: Bearer <ADMIN_API_KEY>`.
 npm run build
 cd backend && npm run build
 ```
+
+## Despliegue Docker en el VPS
+
+La aplicación conserva los datos locales en `backend/data`, expone el frontend
+solo en `127.0.0.1:3000` y conecta ambos servicios a la red externa `proxy`.
+
+```bash
+docker network inspect proxy >/dev/null
+docker compose config --quiet
+docker compose up -d --build
+docker compose ps
+curl --fail http://127.0.0.1:3000/api/health
+```
+
+Después del despliegue se debe validar:
+
+- `https://remesa.eav-labs.com/`
+- `https://remesa.eav-labs.com/api/health`
+- creación de cotización;
+- acceso al panel administrativo;
+- recepción firmada del webhook TronDealer.

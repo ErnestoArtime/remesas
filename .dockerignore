@@ -9,3 +9,12 @@ dist
 .vscode
 README.md
 backend
+.env
+.env.*
+!.env.example
+.agents
+AGENTS.md
+.github
+skills-lock.json
+supabase
+IMPLEMENTATION_PLAN.md
