@@ -35,6 +35,16 @@ input:focus, select:focus { border-color: var(--green); box-shadow: 0 0 0 3px rg
 .metrics > div { background: var(--surface); border: 1px solid var(--line); border-radius: 7px; display: flex; flex-direction: column; min-height: 105px; padding: 18px; }
 .metrics span { color: var(--muted); font-size: 11px; font-weight: 700; }
 .metrics strong { font-size: 27px; margin-top: auto; }
+.catalogs { display: grid; gap: 18px; grid-template-columns: 1fr 1fr; margin-bottom: 22px; }
+.catalogs > div { background: var(--surface); border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+.catalog-list { display: grid; }
+.catalog-list article { align-items: center; border-top: 1px solid var(--line); display: flex; gap: 12px; justify-content: space-between; padding: 13px 18px; }
+.catalog-list article:first-child { border-top: 0; }
+.catalog-list article > div { display: flex; flex-direction: column; gap: 4px; }
+.catalog-list strong { font-size: 12px; }
+.catalog-list small { color: var(--muted); font-size: 10px; }
+.catalog-list button { background: var(--surface-soft); border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 10px; font-weight: 750; min-width: 70px; padding: 7px 10px; }
+.catalog-list button.active { background: var(--green-pale); border-color: #a6d4bd; color: var(--green-dark); }
 .workspace { align-items: start; display: grid; gap: 18px; grid-template-columns: minmax(0,1fr) 290px; }
 .orders-area, .agents-area { background: var(--surface); border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
 .section-title { align-items: center; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; min-height: 68px; padding: 14px 18px; }
@@ -87,6 +97,7 @@ input:focus, select:focus { border-color: var(--green); box-shadow: 0 0 0 3px rg
   .admin-header > div strong { display: none; }
   .admin-main { padding: 26px 14px 50px; }
   .metrics { grid-template-columns: 1fr 1fr; }
+  .catalogs { grid-template-columns: 1fr; }
   .filters { grid-template-columns: 1fr; }
   .table-head { display: none; }
   .order-row { gap: 16px; grid-template-columns: 1fr; }

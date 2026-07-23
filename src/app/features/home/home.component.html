@@ -1,15 +1,23 @@
-@if (isAdminPage) {
-  <app-admin />
-} @else {
+@for (announcement of serviceAnnouncements(); track announcement.id) {
+  <div
+    class="service-announcement"
+    [class.promotion]="announcement.type === 'promotion'"
+    [class.warning]="announcement.type === 'warning'"
+    role="status"
+  >
+    {{ announcement.message }}
+  </div>
+}
+
 <header class="site-header">
   <a class="brand" href="#inicio" aria-label="CashFlowQba, inicio">
     <span class="brand-mark" aria-hidden="true">CF</span>
     <span>CashFlowQba</span>
   </a>
   <nav aria-label="Navegación principal">
-    <a href="#como-funciona">Cómo funciona</a>
+    <a routerLink="/como-funciona">Cómo funciona</a>
     <a href="#tarifas">Tarifas</a>
-    <a href="#ayuda">Ayuda</a>
+    <a routerLink="/ayuda">Ayuda</a>
   </nav>
   <div class="header-actions">
     <button
@@ -33,7 +41,7 @@
       <p class="eyebrow">Envíos con entrega en efectivo</p>
       <h1 id="page-title">Tu familia recibe el monto acordado. Sin cargos sorpresa.</h1>
       <p class="intro-text">
-        Paga con USDT, IBAN o Bizum y coordinamos la entrega de dólares en efectivo al beneficiario en La Habana.
+        Elige entre los métodos habilitados y coordinamos la entrega de dólares en efectivo al beneficiario en La Habana.
         Conoce el total antes de confirmar.
       </p>
       <div class="trust-row" aria-label="Características del servicio">
@@ -49,7 +57,7 @@
       </div>
       <div class="route-map" aria-hidden="true">
         <span class="route-origins">
-          <span class="route-pill">USDT</span>
+          <span class="route-pill">Cripto</span>
           <span class="route-pill sep">EUR</span>
         </span>
         <span class="route-line"></span>
@@ -101,20 +109,36 @@
             </label>
 
             <fieldset>
-              <legend>Método de pago</legend>
+              <legend>Método de entrega</legend>
               <div class="option-grid">
-                <label class="radio-option">
-                  <input type="radio" formControlName="paymentMethod" value="usdt" />
-                  <span><strong>USDT (BSC)</strong><small>Paga con cripto desde tu wallet</small></span>
-                </label>
-                <label class="radio-option">
-                  <input type="radio" formControlName="paymentMethod" value="euro" />
-                  <span><strong>EUR por IBAN o Bizum</strong><small>Contactarás por WhatsApp para coordinar</small></span>
-                </label>
+                @for (method of deliveryMethods(); track method.id) {
+                  <label class="radio-option">
+                    <input type="radio" formControlName="deliveryMethod" [value]="method.code" />
+                    <span>
+                      <strong>{{ method.name }}</strong>
+                      <small>{{ method.description }} · {{ method.estimatedMinHours }}–{{ method.estimatedMaxHours }} h</small>
+                    </span>
+                  </label>
+                }
               </div>
             </fieldset>
 
-            @if (quoteForm.get('paymentMethod')?.value === 'euro') {
+            <fieldset>
+              <legend>Método de pago</legend>
+              <div class="option-grid">
+                @for (option of paymentOptions(); track option.id) {
+                  <label class="radio-option">
+                    <input type="radio" formControlName="paymentOptionId" [value]="option.id" />
+                    <span>
+                      <strong>{{ option.asset }} {{ option.network === 'manual' ? 'por IBAN o Bizum' : '(' + option.network.toUpperCase() + ')' }}</strong>
+                      <small>{{ option.estimatedConfirmationTime }}</small>
+                    </span>
+                  </label>
+                }
+              </div>
+            </fieldset>
+
+            @if (quote().paymentOption.provider === 'manual') {
               <div class="whatsapp-notice">
                 <strong>Pago en EUR</strong>
                 <p>Al continuar, recibirás instrucciones para contactarnos por WhatsApp y coordinar el pago por IBAN o Bizum. El número de contacto se asignará al registrar la remesa.</p>
@@ -135,7 +159,12 @@
               </div>
             </fieldset>
 
-            <button class="primary-button" type="submit">Continuar con los datos</button>
+            @if (quoteError()) {
+              <small class="error-text">{{ quoteError() }}</small>
+            }
+            <button class="primary-button" type="submit" [disabled]="quoteLoading() || !quote().quoteId">
+              {{ quoteLoading() ? 'Calculando…' : 'Continuar con los datos' }}
+            </button>
           </form>
         }
 
@@ -160,14 +189,13 @@
                     @if (fieldInvalid('details', 'senderPhone')) { <small class="error-text">Revisa el número indicado.</small> }
                   </label>
                   <div class="wa-notification-row">
-                    <label class="field chatid-field">
-                      <span>Chat ID para notificación <em>Opcional</em></span>
-                      <input type="text" formControlName="senderChatId" placeholder="5350000000@c.us" />
-                      <small>Si quieres recibir aviso por WhatsApp al asignar la entrega, indica tu Chat ID.</small>
+                    <label class="surprise-field">
+                      <input type="checkbox" formControlName="whatsappConsent" />
+                      <span>Deseo recibir actualizaciones de esta remesa por WhatsApp.</span>
                     </label>
                     <label class="surprise-field">
                       <input type="checkbox" formControlName="isSurprise" />
-                      <span>Es sorpresa — no notificar al remitente</span>
+                      <span>Es una sorpresa: no avisar al beneficiario antes de la entrega.</span>
                     </label>
                   </div>
                 </div>
@@ -225,19 +253,53 @@
             @if (currentOrder.paymentMethod === 'usdt') {
               @if (currentOrder.tronWalletAddress) {
                 <div class="payment-instructions">
-                  <p>Envía el monto exacto en USDT a la dirección de abajo.</p>
+                  <p>
+                    Envía exactamente
+                    <strong>{{ currentOrder.quote.totalToPay | currency:'USD' }} {{ paymentAssetLabel(currentOrder) }}</strong>
+                    a la dirección de abajo.
+                  </p>
                   <div class="network-warning">
-                    <strong>IMPORTANTE:</strong> envía únicamente USDT por red <strong>BSC / BEP-20</strong>.
-                    No uses TRC-20, ERC-20, Solana ni otra red. Si envías por otra red, el pago puede no acreditarse automáticamente.
+                    <strong>IMPORTANTE:</strong> usa únicamente
+                    <strong>{{ paymentAssetLabel(currentOrder) }}</strong> por la red
+                    <strong>{{ paymentNetworkLabel(currentOrder) }}</strong>.
+                    Una red distinta puede impedir la acreditación automática.
                   </div>
                 </div>
                 <div class="payment-status wallet-address">
+                  @if (paymentQrDataUrl()) {
+                    <img
+                      class="payment-qr"
+                      [src]="paymentQrDataUrl()"
+                      width="220"
+                      height="220"
+                      alt="Código QR de la dirección de pago"
+                    />
+                  }
                   <div>
                     <strong>Dirección de pago</strong>
                     <code>{{ currentOrder.tronWalletAddress }}</code>
-                    <small>Red: BSC (BEP-20) · Solo USDT</small>
+                    <small>
+                      Red: {{ paymentNetworkLabel(currentOrder) }} · Solo {{ paymentAssetLabel(currentOrder) }}
+                    </small>
+                    <div class="copy-actions">
+                      <button
+                        class="secondary-button compact-button"
+                        type="button"
+                        (click)="copyPaymentValue(currentOrder.tronWalletAddress, 'Dirección')"
+                      >
+                        Copiar dirección
+                      </button>
+                      <button
+                        class="secondary-button compact-button"
+                        type="button"
+                        (click)="copyPaymentValue(currentOrder.quote.totalToPay.toFixed(2), 'Monto')"
+                      >
+                        Copiar monto
+                      </button>
+                    </div>
                   </div>
                 </div>
+                <p class="copy-feedback" aria-live="polite">{{ copyFeedback() }}</p>
               } @else {
                 <p>
                   Estamos preparando la dirección de pago. No envíes USDT hasta que aparezca la dirección asignada
@@ -264,6 +326,13 @@
               <div><dt>Recibirá</dt><dd>{{ currentOrder.quote.amountDelivered | currency:'USD' }}</dd></div>
               <div><dt>Total</dt><dd>{{ currentOrder.quote.totalToPay | currency:'USD' }} {{ currentOrder.paymentMethod === 'usdt' ? 'USDT' : 'EUR' }}</dd></div>
             </dl>
+            <a
+              class="primary-button"
+              [routerLink]="['/seguimiento', currentOrder.reference]"
+              [queryParams]="{ token: currentOrder.trackingToken }"
+            >
+              Ver seguimiento en tiempo real
+            </a>
             <button class="secondary-button" type="button" (click)="startAnother()">Crear otra remesa</button>
           </div>
         }
@@ -286,9 +355,12 @@
         </dl>
         <div class="summary-total">
           <span>Total a pagar</span>
-          <strong>{{ quote().totalToPay | currency:'USD' }} <small>{{ quoteForm.get('paymentMethod')?.value === 'euro' ? 'EUR' : 'USDT' }}</small></strong>
+          <strong>{{ quote().totalToPay | currency:'USD' }} <small>{{ quote().paymentOption.asset }}</small></strong>
         </div>
-        <p class="summary-note">El total queda fijo durante 20 minutos después de asignar la dirección de pago.</p>
+        <p class="summary-note">
+          Cotización bloqueada durante <strong>{{ quoteCountdown() }}</strong>.
+          Al vencer se generará un nuevo precio antes de crear la remesa.
+        </p>
       </aside>
     </div>
   </section>
@@ -300,7 +372,7 @@
     </div>
     <ol class="process-list">
       <li><span>01</span><div><h3>Registra la remesa</h3><p>Define el monto, el método de pago y los datos de quien recibirá.</p></div></li>
-      <li><span>02</span><div><h3>Paga con USDT o EUR</h3><p>Recibirás instrucciones según el método elegido: dirección USDT o datos IBAN/Bizum.</p></div></li>
+      <li><span>02</span><div><h3>Usa el método elegido</h3><p>Recibirás instrucciones exactas para la opción que esté habilitada en tu cotización.</p></div></li>
       <li><span>03</span><div><h3>Confirmamos la operación</h3><p>Validamos el pago y liberamos la entrega para su coordinación.</p></div></li>
       <li><span>04</span><div><h3>Entregamos y verificamos</h3><p>El beneficiario confirma el monto recibido con un código de seguridad.</p></div></li>
     </ol>
@@ -314,10 +386,15 @@
     </div>
     <div class="rate-table" role="table" aria-label="Tarifas por monto">
       <div role="row"><span role="columnheader">Monto</span><span role="columnheader">Servicio</span></div>
-      <div role="row"><span role="cell">$20–$99</span><strong role="cell">8% · mínimo $5</strong></div>
-      <div role="row"><span role="cell">$100–$299</span><strong role="cell">6.5%</strong></div>
-      <div role="row"><span role="cell">$300–$699</span><strong role="cell">5%</strong></div>
-      <div role="row"><span role="cell">$700–$1,500</span><strong role="cell">4%</strong></div>
+      @for (tier of feeSchedule(); track tier.minimum) {
+        <div role="row">
+          <span role="cell">{{ tier.minimum | currency:'USD':'symbol':'1.0-0' }}–{{ tier.maximum | currency:'USD':'symbol':'1.0-0' }}</span>
+          <strong role="cell">
+            {{ tier.percentage }}%
+            @if (tier.minimumFee) { · mínimo {{ tier.minimumFee | currency:'USD':'symbol':'1.0-0' }} }
+          </strong>
+        </div>
+      }
     </div>
   </section>
 
@@ -329,7 +406,9 @@
 
 <footer>
   <a class="brand footer-brand" href="#inicio"><span class="brand-mark" aria-hidden="true">CF</span><span>CashFlowQba</span></a>
-  <p>Servicio en etapa de validación operativa. La disponibilidad depende de la zona y del cumplimiento de identidad.</p>
+  <p>
+    Servicio en etapa de validación operativa. La disponibilidad depende de la zona y del cumplimiento de identidad.
+    <a routerLink="/terminos">Términos</a> · <a routerLink="/privacidad">Privacidad</a>
+  </p>
   <span>© 2026 CashFlowQba</span>
 </footer>
-}

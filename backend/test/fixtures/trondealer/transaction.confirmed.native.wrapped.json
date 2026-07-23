@@ -1,0 +1,15 @@
+{
+  "event": "transaction.confirmed",
+  "data": {
+    "label": "RC-2026-TEST0002",
+    "asset": "BTC",
+    "amount": "106.72",
+    "amount_native": "0.00141106",
+    "price_usd": 75630,
+    "tx_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "vout_index": 1,
+    "confirmations": 2,
+    "min_confirmations": 2,
+    "network": "btc"
+  }
+}

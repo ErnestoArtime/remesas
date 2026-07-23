@@ -1,0 +1,11 @@
+{
+  "label": "RC-2026-TEST0001",
+  "status": "detected",
+  "txHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "logIndex": 0,
+  "asset": "USDT",
+  "network": "bsc",
+  "amount": "106.50",
+  "confirmations": 1,
+  "minConfirmations": 15
+}

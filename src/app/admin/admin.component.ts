@@ -23,8 +23,37 @@ interface AdminOrder {
   beneficiaryPhone: string;
   municipality: string;
   address: string;
+  paidAsset?: string;
+  paidNetwork?: string;
+  paidAmount?: number;
+  paidAmountNative?: string;
+  paidPriceUsd?: number;
+  confirmations?: number;
+  minConfirmations?: number;
+  txHash?: string;
   quote: { amountDelivered: number; totalToPay: number; deliveryFee: number };
   createdAt: string;
+}
+
+interface PaymentOption {
+  id: string;
+  asset: string;
+  network: string;
+  enabled: boolean;
+  minAmountUsd: number;
+  maxAmountUsd: number;
+}
+
+interface DeliveryMethod {
+  id: string;
+  name: string;
+  zone: string;
+  currency: string;
+  active: boolean;
+  minAmount: number;
+  maxAmount: number;
+  estimatedMinHours: number;
+  estimatedMaxHours: number;
 }
 
 @Component({
@@ -44,6 +73,8 @@ export class AdminComponent {
   protected readonly notice = signal('');
   protected readonly orders = signal<AdminOrder[]>([]);
   protected readonly agents = signal<Agent[]>([]);
+  protected readonly paymentOptions = signal<PaymentOption[]>([]);
+  protected readonly deliveryMethods = signal<DeliveryMethod[]>([]);
   protected readonly search = signal('');
   protected readonly statusFilter = signal('all');
   protected readonly selectedAgents: Record<string, string> = {};
@@ -100,6 +131,8 @@ export class AdminComponent {
     this.authenticated.set(false);
     this.orders.set([]);
     this.agents.set([]);
+    this.paymentOptions.set([]);
+    this.deliveryMethods.set([]);
     this.loginForm.reset();
   }
 
@@ -153,6 +186,36 @@ export class AdminComponent {
     this.patchOrder(order.reference, 'delivery-status', { status }, 'Estado de entrega actualizado.');
   }
 
+  protected togglePaymentOption(option: PaymentOption): void {
+    this.clearMessages();
+    this.http.patch<PaymentOption>(
+      `/api/admin/payment-options/${option.id}`,
+      { enabled: !option.enabled },
+      { headers: this.headers() },
+    ).subscribe({
+      next: (updated) => {
+        this.paymentOptions.update((options) => options.map((item) => item.id === updated.id ? updated : item));
+        this.notice.set(`${updated.asset} ${updated.network.toUpperCase()} ${updated.enabled ? 'habilitado' : 'deshabilitado'}.`);
+      },
+      error: (response) => this.error.set(response.error?.error || 'No se pudo actualizar la opción de pago.'),
+    });
+  }
+
+  protected toggleDeliveryMethod(method: DeliveryMethod): void {
+    this.clearMessages();
+    this.http.patch<DeliveryMethod>(
+      `/api/admin/delivery-methods/${method.id}`,
+      { active: !method.active },
+      { headers: this.headers() },
+    ).subscribe({
+      next: (updated) => {
+        this.deliveryMethods.update((methods) => methods.map((item) => item.id === updated.id ? updated : item));
+        this.notice.set(`${updated.name} ${updated.active ? 'habilitado' : 'deshabilitado'}.`);
+      },
+      error: (response) => this.error.set(response.error?.error || 'No se pudo actualizar el método de entrega.'),
+    });
+  }
+
   protected canAssign(order: AdminOrder): boolean {
     return ['confirmed', 'notified', 'swept', 'ready_for_delivery'].includes(order.paymentStatus);
   }
@@ -162,6 +225,7 @@ export class AdminComponent {
       pending_wallet: 'Preparando wallet',
       awaiting_payment: 'Esperando pago',
       detected: 'Pago detectado',
+      confirming: 'Confirmando en blockchain',
       underpaid: 'Pago insuficiente',
       payment_review: 'Revisar pago',
       confirmed: 'Pago confirmado',
@@ -191,10 +255,14 @@ export class AdminComponent {
     forkJoin({
       orders: this.http.get<AdminOrder[]>('/api/admin/orders', { headers: this.headers() }),
       agents: this.http.get<Agent[]>('/api/admin/agents', { headers: this.headers() }),
+      paymentOptions: this.http.get<PaymentOption[]>('/api/admin/payment-options', { headers: this.headers() }),
+      deliveryMethods: this.http.get<DeliveryMethod[]>('/api/admin/delivery-methods', { headers: this.headers() }),
     }).subscribe({
-      next: ({ orders, agents }) => {
+      next: ({ orders, agents, paymentOptions, deliveryMethods }) => {
         this.orders.set(orders);
         this.agents.set(agents);
+        this.paymentOptions.set(paymentOptions);
+        this.deliveryMethods.set(deliveryMethods);
         this.authenticated.set(true);
         this.loading.set(false);
         if (persistToken) sessionStorage.setItem('cashflowqba-admin-token', this.token);

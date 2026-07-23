@@ -1,52 +1,66 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { Observable, map } from 'rxjs';
 import {
-  DeliverySpeed,
-  DeliveryZone,
+  DeliveryMethod,
+  FeeTier,
+  PaymentOption,
   QuoteRequest,
   RemittanceQuote,
+  ServiceAnnouncement,
 } from '../models/remittance.model';
 
-interface FeeTier {
-  maximum: number;
-  percentage: number;
-  minimumFee: number;
+interface QuoteApiResponse {
+  quoteId: string;
+  amountDelivered: number;
+  serviceFee: number;
+  deliveryFee: number;
+  totalToPayUsd: number;
+  feePercentage: number;
+  estimatedDelivery: string;
+  expiresAt: string;
+  paymentOption: PaymentOption;
 }
 
 @Injectable({ providedIn: 'root' })
 export class QuoteService {
-  private readonly feeTiers: FeeTier[] = [
-    { maximum: 99.99, percentage: 8, minimumFee: 5 },
-    { maximum: 299.99, percentage: 6.5, minimumFee: 0 },
-    { maximum: 699.99, percentage: 5, minimumFee: 0 },
-    { maximum: 1500, percentage: 4, minimumFee: 0 },
-  ];
+  private readonly http = inject(HttpClient);
 
-  private readonly deliveryFees: Record<DeliveryZone, number> = {
-    havana: 0,
-  };
-
-  calculate(request: QuoteRequest): RemittanceQuote {
-    const amount = Math.min(Math.max(Number(request.amount) || 0, 0), 1500);
-    const tier = this.feeTiers.find((item) => amount <= item.maximum) ?? this.feeTiers.at(-1)!;
-    const serviceFee = Math.max((amount * tier.percentage) / 100, tier.minimumFee);
-    const priorityFee = request.speed === 'priority' ? 5 : 0;
-    const deliveryFee = this.deliveryFees[request.zone] + priorityFee;
-
-    return {
-      amountDelivered: this.round(amount),
-      serviceFee: this.round(serviceFee),
-      deliveryFee: this.round(deliveryFee),
-      totalToPay: this.round(amount + serviceFee + deliveryFee),
-      feePercentage: tier.percentage,
-      estimatedDelivery: this.getDeliveryEstimate(request.speed),
-    };
+  getPaymentOptions(): Observable<PaymentOption[]> {
+    return this.http.get<PaymentOption[]>('/api/payment-options');
   }
 
-  private getDeliveryEstimate(speed: DeliverySpeed): string {
-    return speed === 'priority' ? 'Hasta 6 horas' : 'En 24 horas';
+  getDeliveryMethods(): Observable<DeliveryMethod[]> {
+    return this.http.get<DeliveryMethod[]>('/api/delivery-methods');
   }
 
-  private round(value: number): number {
-    return Math.round(value * 100) / 100;
+  getServiceAnnouncements(): Observable<ServiceAnnouncement[]> {
+    return this.http.get<ServiceAnnouncement[]>('/api/service-announcements');
+  }
+
+  getFeeSchedule(): Observable<FeeTier[]> {
+    return this.http.get<FeeTier[]>('/api/fee-schedule');
+  }
+
+  calculate(request: QuoteRequest): Observable<RemittanceQuote> {
+    return this.http.post<QuoteApiResponse>('/api/quotes', {
+      amountDelivered: Number(request.amount),
+      deliveryMethod: request.deliveryMethod,
+      municipality: request.zone,
+      deliverySpeed: request.speed,
+      paymentOptionId: request.paymentOptionId,
+    }).pipe(
+      map((quote) => ({
+        quoteId: quote.quoteId,
+        amountDelivered: quote.amountDelivered,
+        serviceFee: quote.serviceFee,
+        deliveryFee: quote.deliveryFee,
+        totalToPay: quote.totalToPayUsd,
+        feePercentage: quote.feePercentage,
+        estimatedDelivery: quote.estimatedDelivery,
+        expiresAt: quote.expiresAt,
+        paymentOption: quote.paymentOption,
+      })),
+    );
   }
 }

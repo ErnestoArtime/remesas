@@ -35,6 +35,41 @@
       <div><span>Entregados</span><strong>{{ metrics().delivered }}</strong></div>
     </section>
 
+    <section class="catalogs" aria-label="Catálogos operativos">
+      <div>
+        <div class="section-title"><div><h2>Pagos</h2><p>Solo se muestran en checkout los pares habilitados</p></div></div>
+        <div class="catalog-list">
+          @for (option of paymentOptions(); track option.id) {
+            <article>
+              <div>
+                <strong>{{ option.asset }} · {{ option.network | uppercase }}</strong>
+                <small>{{ option.minAmountUsd | currency:'USD' }}–{{ option.maxAmountUsd | currency:'USD' }}</small>
+              </div>
+              <button type="button" [class.active]="option.enabled" (click)="togglePaymentOption(option)">
+                {{ option.enabled ? 'Activo' : 'Inactivo' }}
+              </button>
+            </article>
+          }
+        </div>
+      </div>
+      <div>
+        <div class="section-title"><div><h2>Entregas</h2><p>Disponibilidad, límites y plazos configurados en backend</p></div></div>
+        <div class="catalog-list">
+          @for (method of deliveryMethods(); track method.id) {
+            <article>
+              <div>
+                <strong>{{ method.name }} · {{ method.zone }}</strong>
+                <small>{{ method.minAmount | currency:method.currency }}–{{ method.maxAmount | currency:method.currency }} · {{ method.estimatedMinHours }}–{{ method.estimatedMaxHours }} h</small>
+              </div>
+              <button type="button" [class.active]="method.active" (click)="toggleDeliveryMethod(method)">
+                {{ method.active ? 'Activo' : 'Inactivo' }}
+              </button>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
     <section class="workspace">
       <div class="orders-area">
         <div class="section-title"><div><h2>Pedidos</h2><p>{{ filteredOrders().length }} resultados</p></div></div>
@@ -47,7 +82,14 @@
           <div class="table-head"><span>Pedido</span><span>Beneficiario</span><span>Estados</span><span>Entrega</span></div>
           @for (order of filteredOrders(); track order.reference) {
             <article class="order-row">
-              <div class="order-id"><strong>{{ order.reference }}</strong><span>{{ order.createdAt | date:'dd/MM/yy, HH:mm' }}</span><small>{{ order.quote.amountDelivered | currency:'USD' }} · {{ order.paymentMethod | uppercase }}</small></div>
+              <div class="order-id">
+                <strong>{{ order.reference }}</strong>
+                <span>{{ order.createdAt | date:'dd/MM/yy, HH:mm' }}</span>
+                <small>{{ order.quote.amountDelivered | currency:'USD' }} · {{ order.paidAsset || (order.paymentMethod | uppercase) }} {{ order.paidNetwork ? '· ' + (order.paidNetwork | uppercase) : '' }}</small>
+                @if (order.confirmations !== undefined && order.minConfirmations) {
+                  <small>{{ order.confirmations }} de {{ order.minConfirmations }} confirmaciones</small>
+                }
+              </div>
               <div class="beneficiary"><strong>{{ order.beneficiaryName }}</strong><span>{{ order.beneficiaryPhone }}</span><small>{{ order.municipality }} · {{ order.address }}</small></div>
               <div class="statuses"><span class="badge" [class.ready]="canAssign(order)">{{ paymentLabel(order.paymentStatus) }}</span><span class="badge delivery">{{ deliveryLabel(order.deliveryStatus) }}</span></div>
                 <div class="delivery-actions">

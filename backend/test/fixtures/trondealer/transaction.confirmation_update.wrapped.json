@@ -1,0 +1,13 @@
+{
+  "event": "transaction.confirmation_update",
+  "data": {
+    "label": "RC-2026-TEST0001",
+    "tx_hash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "log_index": 0,
+    "asset": "USDT",
+    "network": "bsc",
+    "amount": "106.50",
+    "confirmations": 7,
+    "min_confirmations": 15
+  }
+}

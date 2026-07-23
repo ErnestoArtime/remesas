@@ -1,13 +1,32 @@
 :root {
   color-scheme: light;
-  --ink: #17211d;
+  --primary-navy: #082f57;
+  --primary-green: #117a59;
+  --secondary-turquoise: #2eb8a6;
+  --background-light: #f4f8fb;
+  --background-dark: #071f38;
+  --text-primary: #102538;
+  --text-muted: #617384;
+  --success: #16845f;
+  --warning: #b7791f;
+  --border: #d8e2e8;
+  --shadow-card: 0 16px 40px rgba(8, 47, 87, .09);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 18px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --ink: var(--text-primary);
   --muted: #617068;
-  --line: #d9e0dc;
+  --line: var(--border);
   --surface: #ffffff;
-  --surface-soft: #f3f6f4;
-  --green: #176b4d;
-  --green-dark: #0d4f38;
-  --green-pale: #e6f2ec;
+  --surface-soft: var(--background-light);
+  --green: var(--primary-green);
+  --green-dark: #117555;
+  --green-pale: #e6f6f0;
   --coral: #d65b45;
   --error: #b42318;
 }
@@ -32,3 +51,7 @@ body { margin: 0; background: var(--surface); color: var(--ink); font-family: In
 button, input, select, textarea { font: inherit; }
 a { color: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 3px solid rgba(46, 184, 166, .35);
+  outline-offset: 2px;
+}

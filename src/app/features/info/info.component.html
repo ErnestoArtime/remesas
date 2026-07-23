@@ -1,0 +1,19 @@
+<header>
+  <a routerLink="/" class="brand"><span>CF</span>CashFlowQba</a>
+  <a routerLink="/">Volver al inicio</a>
+</header>
+
+<main>
+  <p class="eyebrow">{{ page.eyebrow }}</p>
+  <h1>{{ page.title }}</h1>
+  <p class="intro">{{ page.intro }}</p>
+
+  <div class="sections">
+    @for (section of page.sections; track section.title) {
+      <section>
+        <h2>{{ section.title }}</h2>
+        <p>{{ section.body }}</p>
+      </section>
+    }
+  </div>
+</main>

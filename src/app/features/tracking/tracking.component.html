@@ -1,0 +1,64 @@
+<header class="tracking-header">
+  <a routerLink="/" class="brand"><span>CF</span> CashFlowQba</a>
+  <a href="mailto:operaciones@cashflowqba.com">Soporte</a>
+</header>
+
+<main class="tracking-page">
+  @if (loading()) {
+    <section class="tracking-card loading-card" aria-live="polite">
+      <div class="skeleton"></div>
+      <div class="skeleton short"></div>
+    </section>
+  } @else if (error()) {
+    <section class="tracking-card error-card">
+      <p class="eyebrow">Seguimiento</p>
+      <h1>No pudimos abrir la remesa</h1>
+      <p>{{ error() }}</p>
+      <a routerLink="/">Volver al inicio</a>
+    </section>
+  } @else if (status(); as current) {
+    <section class="tracking-card">
+      <p class="eyebrow">Seguimiento en tiempo real</p>
+      <h1>{{ current.reference }}</h1>
+      <p class="updated">Actualizado {{ current.updatedAt | date:'medium' }}</p>
+
+      <ol class="timeline">
+        <li class="complete"><span>1</span><div><strong>Solicitud registrada</strong><small>Esperando el pago</small></div></li>
+        <li [class.complete]="paymentReached('detected')"><span>2</span><div><strong>Pago detectado</strong><small>{{ current.asset || 'Activo pendiente' }} · {{ current.network || 'Red pendiente' }}</small></div></li>
+        <li [class.complete]="paymentReached('confirmed')"><span>3</span><div><strong>Confirmando en blockchain</strong><small>La entrega sigue bloqueada hasta la confirmación</small></div></li>
+        <li [class.complete]="current.deliveryStatus === 'assigned' || current.deliveryStatus === 'out_for_delivery' || current.deliveryStatus === 'delivered'"><span>4</span><div><strong>Preparando entrega</strong><small>Asignación operativa</small></div></li>
+        <li [class.complete]="current.deliveryStatus === 'delivered'"><span>5</span><div><strong>Entregado</strong><small>Proceso completado</small></div></li>
+      </ol>
+
+      @if (current.minConfirmations > 0 && !paymentReached('confirmed')) {
+        <div class="confirmation-box">
+          <div><strong>Confirmaciones</strong><span>{{ current.confirmations }} de {{ current.minConfirmations }}</span></div>
+          <div class="progress" role="progressbar" [attr.aria-valuenow]="progressPercent()" aria-valuemin="0" aria-valuemax="100">
+            <span [style.width.%]="progressPercent()"></span>
+          </div>
+        </div>
+      }
+
+      <dl class="payment-details">
+        @if (current.amountReceivedUsd !== undefined) {
+          <div><dt>Equivalente recibido</dt><dd>${{ current.amountReceivedUsd | number:'1.2-2' }}</dd></div>
+        }
+        <div><dt>Entrega estimada</dt><dd>{{ current.estimatedDelivery }}</dd></div>
+        @if (current.txHash) {
+          <div>
+            <dt>Transacción</dt>
+            <dd>
+              @if (current.explorerUrl) {
+                <a [href]="current.explorerUrl" target="_blank" rel="noopener noreferrer">
+                  <code>{{ current.txHash.slice(0, 10) }}…{{ current.txHash.slice(-6) }}</code>
+                </a>
+              } @else {
+                <code>{{ current.txHash.slice(0, 10) }}…{{ current.txHash.slice(-6) }}</code>
+              }
+            </dd>
+          </div>
+        }
+      </dl>
+    </section>
+  }
+</main>

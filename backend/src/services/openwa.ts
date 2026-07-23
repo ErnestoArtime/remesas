@@ -16,7 +16,14 @@ export const openwaConfig = {
   },
 };
 
-async function sendText(chatId: string, text: string): Promise<{ ok: boolean; skipped?: boolean; error?: string }> {
+export interface OpenWaResult {
+  ok: boolean;
+  skipped?: boolean;
+  error?: string;
+  providerMessageId?: string;
+}
+
+async function sendText(chatId: string, text: string): Promise<OpenWaResult> {
   if (!openwaConfig.enabled || !chatId) {
     return { ok: false, skipped: true, error: 'openwa-disabled-or-no-chat' };
   }
@@ -39,7 +46,9 @@ async function sendText(chatId: string, text: string): Promise<{ ok: boolean; sk
       return { ok: false, error: `HTTP ${response.status}: ${body}` };
     }
 
-    return { ok: true };
+    const body = await response.json().catch(() => ({})) as Record<string, unknown>;
+    const providerMessageId = String(body.id || body.messageId || body.message_id || '') || undefined;
+    return { ok: true, providerMessageId };
   } catch (err) {
     return { ok: false, error: String(err) };
   }
@@ -50,8 +59,10 @@ export async function notifyAdminAssignment(order: {
   beneficiaryName: string;
   municipality: string;
   assignedAgentName: string;
-}): Promise<void> {
-  if (!openwaConfig.adminChatId) return;
+}): Promise<OpenWaResult> {
+  if (!openwaConfig.adminChatId) {
+    return { ok: false, skipped: true, error: 'openwa-admin-chat-not-configured' };
+  }
 
   const text = [
     `✅ *Entrega asignada*`,
@@ -64,7 +75,7 @@ export async function notifyAdminAssignment(order: {
     `CashFlowQba · Notificación automática`,
   ].join('\n');
 
-  await sendText(openwaConfig.adminChatId, text);
+  return sendText(openwaConfig.adminChatId, text);
 }
 
 export async function notifySenderDelivery(order: {
@@ -74,9 +85,9 @@ export async function notifySenderDelivery(order: {
   assignedAgentName: string;
   senderName: string;
   senderChatId: string;
-}): Promise<void> {
+}): Promise<OpenWaResult> {
   const chatId = order.senderChatId;
-  if (!chatId) return;
+  if (!chatId) return { ok: false, skipped: true, error: 'sender-chat-not-configured' };
 
   const text = [
     `📦 *Tu entrega está en camino*`,
@@ -87,5 +98,5 @@ export async function notifySenderDelivery(order: {
     `CashFlowQba · Notificación automática`,
   ].join('\n');
 
-  await sendText(chatId, text);
+  return sendText(chatId, text);
 }
