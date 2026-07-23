@@ -154,6 +154,8 @@ de TronDealer. Nunca se guardarán wallets, firmas, teléfonos ni secretos reale
 - [~] Separar home, cotización, checkout, seguimiento, admin y ayuda.
 - [x] Rediseñar la portada con hero humano, calculadora central y seguimiento visual.
 - [x] Usar azul marino, verde y fondos claros como dirección visual.
+- [x] Añadir identidad gráfica propia en cabecera, pie y favicon.
+- [x] Añadir animaciones de aparición por scroll con movimiento reducido accesible.
 - [x] No mostrar testimonios, tasas, cobertura o tiempos ficticios.
 - [x] Unificar todo el branding bajo CashFlowQba.
 
@@ -340,3 +342,12 @@ verificados de extremo a extremo.
   `https://remesa.eav-labs.com/`; el frontend quedó `healthy`, la portada y
   `/api/health` responden `200`, la imagen carga y los tres métodos activos se
   muestran correctamente en la verificación móvil de producción.
+- Creado un símbolo original CashFlowQba de flechas circulares y confirmación,
+  integrado en cabecera, pie, favicon y acceso directo de iOS.
+- Añadidas 23 entradas animadas activadas una sola vez mediante
+  `IntersectionObserver`, con direcciones y retardos escalonados.
+- Añadidos microestados de hover, acercamiento suave del hero y animación de la
+  barra de confirmaciones.
+- Verificado que los 23 elementos aparecen al recorrer la página, que no existe
+  desbordamiento horizontal y que `prefers-reduced-motion` desactiva totalmente
+  el movimiento. La auditoría WCAG 2 A/AA continúa sin violaciones.

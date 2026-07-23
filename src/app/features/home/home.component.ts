@@ -1,6 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, ElementRef, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
@@ -47,11 +47,13 @@ const EMPTY_QUOTE: RemittanceQuote = {
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent {
+export class HomeComponent implements AfterViewInit {
   private readonly http = inject(HttpClient);
   private readonly formBuilder = inject(FormBuilder);
   private readonly quoteService = inject(QuoteService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private revealObserver?: IntersectionObserver;
   private lastRefreshedExpiredQuoteId = '';
 
   protected readonly currentStep = signal<1 | 2 | 3>(1);
@@ -166,7 +168,37 @@ export class HomeComponent {
       });
 
     const countdownTimer = window.setInterval(() => this.updateQuoteCountdown(), 1000);
-    this.destroyRef.onDestroy(() => window.clearInterval(countdownTimer));
+    this.destroyRef.onDestroy(() => {
+      window.clearInterval(countdownTimer);
+      this.revealObserver?.disconnect();
+    });
+  }
+
+  ngAfterViewInit(): void {
+    const host = this.elementRef.nativeElement;
+    const elements = Array.from(host.querySelectorAll<HTMLElement>('[data-reveal]'));
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      elements.forEach((element) => element.classList.add('is-visible'));
+      return;
+    }
+
+    host.classList.add('reveal-enabled');
+    this.revealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      });
+    }, {
+      rootMargin: '0px 0px -8% 0px',
+      threshold: 0.12,
+    });
+
+    window.requestAnimationFrame(() => {
+      elements.forEach((element) => this.revealObserver?.observe(element));
+    });
   }
 
   protected continueToDetails(): void {

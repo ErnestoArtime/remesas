@@ -11,7 +11,7 @@
 
 <header class="site-header">
   <a class="brand" href="#inicio" aria-label="CashFlowQba, inicio">
-    <span class="brand-mark" aria-hidden="true">CF</span>
+    <img class="brand-mark" src="/brand/cashflowqba-mark.png" width="34" height="34" alt="" />
     <span>CashFlowQba</span>
   </a>
   <nav aria-label="Navegación principal">
@@ -38,7 +38,7 @@
 
 <main id="inicio">
   <section class="intro-band" aria-labelledby="page-title">
-    <div class="intro-copy">
+    <div class="intro-copy" data-reveal="left">
       <p class="eyebrow">Remesas a Cuba con seguimiento real</p>
       <h1 id="page-title">Envía dinero a Cuba con claridad, seguridad y seguimiento.</h1>
       <p class="intro-text">
@@ -55,7 +55,7 @@
         <span role="listitem">Atención humana</span>
       </div>
     </div>
-    <figure class="hero-visual">
+    <figure class="hero-visual" data-reveal="right" style="--reveal-delay: 100ms">
       <img
         src="/images/cashflowqba-havana-hero.webp"
         width="1536"
@@ -83,13 +83,13 @@
   </section>
 
   <section class="remittance-section" id="enviar" aria-labelledby="tool-title">
-    <div class="section-heading">
+    <div class="section-heading" data-reveal="up">
       <p class="eyebrow">Crear una remesa</p>
       <h2 id="tool-title">Cotiza y registra el envío</h2>
     </div>
 
     <div class="flow-layout">
-      <div class="flow-panel">
+      <div class="flow-panel" data-reveal="up" style="--reveal-delay: 80ms">
         <div class="step-header">
           <ol class="steps" aria-label="Progreso del envío">
             <li [class.active]="currentStep() >= 1"><span>1</span>Cotización</li>
@@ -350,7 +350,7 @@
         }
       </div>
 
-      <aside class="quote-summary" aria-label="Resumen de cotización">
+      <aside class="quote-summary" aria-label="Resumen de cotización" data-reveal="right" style="--reveal-delay: 160ms">
         <div class="summary-heading">
           <span>Resumen</span>
           <strong>{{ quote().estimatedDelivery }}</strong>
@@ -378,20 +378,20 @@
   </section>
 
   <section class="process-section" id="como-funciona" aria-labelledby="process-title">
-    <div class="section-heading">
+    <div class="section-heading" data-reveal="up">
       <p class="eyebrow">Proceso controlado</p>
       <h2 id="process-title">Del pago a la entrega</h2>
     </div>
     <ol class="process-list">
-      <li><span>01</span><div><h3>Registra la remesa</h3><p>Define el monto, el método de pago y los datos de quien recibirá.</p></div></li>
-      <li><span>02</span><div><h3>Usa el método elegido</h3><p>Recibirás instrucciones exactas para la opción que esté habilitada en tu cotización.</p></div></li>
-      <li><span>03</span><div><h3>Confirmamos la operación</h3><p>Validamos el pago y liberamos la entrega para su coordinación.</p></div></li>
-      <li><span>04</span><div><h3>Entregamos y verificamos</h3><p>El beneficiario confirma el monto recibido con un código de seguridad.</p></div></li>
+      <li data-reveal="up"><span>01</span><div><h3>Registra la remesa</h3><p>Define el monto, el método de pago y los datos de quien recibirá.</p></div></li>
+      <li data-reveal="up" style="--reveal-delay: 70ms"><span>02</span><div><h3>Usa el método elegido</h3><p>Recibirás instrucciones exactas para la opción que esté habilitada en tu cotización.</p></div></li>
+      <li data-reveal="up" style="--reveal-delay: 140ms"><span>03</span><div><h3>Confirmamos la operación</h3><p>Validamos el pago y liberamos la entrega para su coordinación.</p></div></li>
+      <li data-reveal="up" style="--reveal-delay: 210ms"><span>04</span><div><h3>Entregamos y verificamos</h3><p>El beneficiario confirma el monto recibido con un código de seguridad.</p></div></li>
     </ol>
   </section>
 
   <section class="tracking-showcase" id="seguimiento" aria-labelledby="tracking-showcase-title">
-    <div class="tracking-copy">
+    <div class="tracking-copy" data-reveal="left">
       <p class="eyebrow">Seguimiento en tiempo real</p>
       <h2 id="tracking-showcase-title">Sabes dónde está tu remesa en cada momento.</h2>
       <p>
@@ -400,7 +400,7 @@
       </p>
       <a routerLink="/como-funciona" class="text-action">Conocer el proceso <span aria-hidden="true">→</span></a>
     </div>
-    <div class="tracking-demo" role="group" aria-label="Ejemplo visual del seguimiento de una remesa">
+    <div class="tracking-demo" role="group" aria-label="Ejemplo visual del seguimiento de una remesa" data-reveal="right" style="--reveal-delay: 100ms">
       <div class="demo-heading"><span>Ejemplo de seguimiento</span><strong>Actualizado ahora</strong></div>
       <ol class="demo-timeline">
         <li class="complete"><span>✓</span><div><strong>Solicitud registrada</strong><small>Datos verificados</small></div></li>
@@ -416,26 +416,26 @@
   </section>
 
   <section class="benefits-section" aria-labelledby="benefits-title">
-    <div class="section-heading">
+    <div class="section-heading" data-reveal="up">
       <p class="eyebrow">Por qué CashFlowQba</p>
       <h2 id="benefits-title">Tecnología clara, acompañamiento humano.</h2>
     </div>
     <div class="benefit-grid">
-      <article><span aria-hidden="true">01</span><h3>Precio cerrado</h3><p>La cotización queda bloqueada antes de generar las instrucciones de pago.</p></article>
-      <article><span aria-hidden="true">02</span><h3>Seguimiento privado</h3><p>Consulta el progreso sin exponer teléfonos, dirección ni datos del agente.</p></article>
-      <article><span aria-hidden="true">03</span><h3>Pago controlado</h3><p>La entrega solo se habilita cuando TronDealer confirma la transacción.</p></article>
-      <article><span aria-hidden="true">04</span><h3>Soporte operativo</h3><p>La referencia conecta el pago, la coordinación y el historial de la entrega.</p></article>
+      <article data-reveal="up"><span aria-hidden="true">01</span><h3>Precio cerrado</h3><p>La cotización queda bloqueada antes de generar las instrucciones de pago.</p></article>
+      <article data-reveal="up" style="--reveal-delay: 70ms"><span aria-hidden="true">02</span><h3>Seguimiento privado</h3><p>Consulta el progreso sin exponer teléfonos, dirección ni datos del agente.</p></article>
+      <article data-reveal="up" style="--reveal-delay: 140ms"><span aria-hidden="true">03</span><h3>Pago controlado</h3><p>La entrega solo se habilita cuando TronDealer confirma la transacción.</p></article>
+      <article data-reveal="up" style="--reveal-delay: 210ms"><span aria-hidden="true">04</span><h3>Soporte operativo</h3><p>La referencia conecta el pago, la coordinación y el historial de la entrega.</p></article>
     </div>
   </section>
 
   <section class="methods-section" aria-labelledby="methods-title">
-    <div class="section-heading">
+    <div class="section-heading" data-reveal="up">
       <p class="eyebrow">Opciones disponibles</p>
       <h2 id="methods-title">Solo mostramos servicios que están activos.</h2>
       <p>Activos, redes, límites y plazos provienen del catálogo operativo del backend.</p>
     </div>
     <div class="method-columns">
-      <div>
+      <div data-reveal="left">
         <h3>Cómo puedes pagar</h3>
         <div class="method-list">
           @for (option of paymentOptions(); track option.id) {
@@ -447,7 +447,7 @@
           }
         </div>
       </div>
-      <div>
+      <div data-reveal="right" style="--reveal-delay: 100ms">
         <h3>Cómo recibe tu familiar</h3>
         <div class="method-list">
           @for (method of deliveryMethods(); track method.id) {
@@ -463,12 +463,12 @@
   </section>
 
   <section class="rates-section" id="tarifas" aria-labelledby="rates-title">
-    <div>
+    <div data-reveal="left">
       <p class="eyebrow">Tarifas visibles</p>
       <h2 id="rates-title">La comisión baja cuando envías más</h2>
       <p>El cálculo final incluye servicio y entrega. Nunca descontamos la comisión del monto destinado al beneficiario.</p>
     </div>
-    <div class="rate-table" role="table" aria-label="Tarifas por monto">
+    <div class="rate-table" role="table" aria-label="Tarifas por monto" data-reveal="right" style="--reveal-delay: 100ms">
       <div role="row"><span role="columnheader">Monto</span><span role="columnheader">Servicio</span></div>
       @for (tier of feeSchedule(); track tier.minimum) {
         <div role="row">
@@ -482,14 +482,14 @@
     </div>
   </section>
 
-  <section class="help-section" id="ayuda">
+  <section class="help-section" id="ayuda" data-reveal="up">
     <div><p class="eyebrow">Soporte de operación</p><h2>¿Necesitas revisar una entrega?</h2></div>
     <a href="mailto:operaciones@cashflowqba.com">Contactar soporte</a>
   </section>
 </main>
 
 <footer>
-  <a class="brand footer-brand" href="#inicio"><span class="brand-mark" aria-hidden="true">CF</span><span>CashFlowQba</span></a>
+  <a class="brand footer-brand" href="#inicio"><img class="brand-mark" src="/brand/cashflowqba-mark.png" width="28" height="28" alt="" /><span>CashFlowQba</span></a>
   <p>
     Servicio en etapa de validación operativa. La disponibilidad depende de la zona y del cumplimiento de identidad.
     <a routerLink="/terminos">Términos</a> · <a routerLink="/privacidad">Privacidad</a>
